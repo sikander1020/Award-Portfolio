@@ -6,7 +6,6 @@
 
 import { useEffect, useMemo, useRef, useState, type CSSProperties, type FormEvent, type KeyboardEvent, type PointerEvent as ReactPointerEvent } from "react";
 import { AnimatePresence, LayoutGroup, motion, useMotionValue, useReducedMotion, useSpring, useTransform } from "framer-motion";
-import { useAuth } from "@/_core/hooks/useAuth";
 import {
   ArrowUpRight,
   BriefcaseBusiness,
@@ -33,17 +32,16 @@ import {
 import { toast } from "sonner";
 import { Spinner } from "@/components/ui/spinner";
 import { portfolioData, type ScreenId } from "@/data/portfolioData";
-import { trpc } from "@/lib/trpc";
+import { portableMedia } from "@/data/portableMedia";
 import { CONTACT_SUCCESS_VISIBLE_MS, getContactSuccessCopy } from "@/lib/contactFeedback";
+import { submitContactTransmission } from "@/lib/contactDelivery";
 import { shouldEscalateWantedLevel, validateContactField, validateContactForm, type ContactField, type ContactFormErrors, type ContactFormValues } from "@/lib/contactValidation";
-import { resolvePortfolioScreenArt } from "@/lib/portfolioAssets";
 import { cycleRadioStationIndex, radioStations } from "@/lib/radio";
 import { attemptAudioPlayback, attemptBackgroundAutoplay, shouldAutoStartBackgroundAudio, shouldPlayTypingCue, shouldPlayUiAudio, shouldStartBlockedAutoplayOnUserInteraction } from "@/lib/audio";
 import { shouldRenderHeroMotion } from "@/lib/heroMotion";
 import { getMobileMotionDurations } from "@/lib/mobileMotion";
 import { canLaunchGithubRepository, PROJECT_LAUNCH_DURATION_MS } from "@/lib/projectLaunch";
 import { useIsMobile } from "@/hooks/useMobile";
-import { useLocation } from "wouter";
 
 const screenIndex = Object.fromEntries(portfolioData.screens.map((screen, index) => [screen.id, index]));
 const cinematicEase = [0.22, 1, 0.36, 1] as const;
@@ -62,9 +60,6 @@ function useLiveClock() {
 }
 
 export default function Home() {
-  const { user, isAuthenticated } = useAuth();
-  const [, setLocation] = useLocation();
-  const { data: slotAssets } = trpc.assets.currentSlots.useQuery();
 
   const [activeId, setActiveId] = useState<ScreenId>(() => {
     const requestedScreen = new URLSearchParams(window.location.search).get("screen");
@@ -107,8 +102,8 @@ export default function Home() {
     () => portfolioData.screens.find((screen) => screen.id === activeId) ?? portfolioData.screens[0],
     [activeId],
   );
-  const activeArt = resolvePortfolioScreenArt(activeId, slotAssets, activeScreen.art);
-  const heroArt = resolvePortfolioScreenArt("start", slotAssets, portfolioData.screens[0].art);
+  const activeArt = activeScreen.art;
+  const heroArt = portfolioData.screens[0].art;
   const hasOwnerApprovedHeroVideo = portfolioData.media.heroVideo.ownerApproved && Boolean(portfolioData.media.heroVideo.src);
   const renderHeroMotion = shouldRenderHeroMotion({
     activeScreen: activeId,
@@ -295,10 +290,10 @@ export default function Home() {
       aria-label="Interactive portfolio game menu"
     >
       <audio ref={backgroundAudioRef} src={activeRadioStation.src} loop autoPlay preload="auto" />
-      <audio ref={navAudioRef} src="/manus-storage/vice-nav_c81f2224.mp3" preload="auto" />
-      <audio ref={bootAudioRef} src="/manus-storage/vice-boot-ready_f783e2aa.mp3" preload="auto" />
-      <audio ref={missionAudioRef} src="/manus-storage/vice-mission-passed_fb89ebaf.mp3" preload="auto" />
-      <audio ref={typingAudioRef} src="/manus-storage/vice-nav_c81f2224.mp3" preload="auto" />
+      <audio ref={navAudioRef} src={portableMedia.audio.navigation} preload="auto" />
+      <audio ref={bootAudioRef} src={portableMedia.audio.bootReady} preload="auto" />
+      <audio ref={missionAudioRef} src={portableMedia.audio.missionPassed} preload="auto" />
+      <audio ref={typingAudioRef} src={portableMedia.audio.navigation} preload="auto" />
       <AnimatePresence>
         {isBooting && <BootIntro heroArt={heroArt} onComplete={() => setIsBooting(false)} onEnableAudio={() => { enableAudio(); window.setTimeout(() => playCueNow(bootAudioRef), 70); }} />}
       </AnimatePresence>
@@ -375,7 +370,7 @@ export default function Home() {
       <header className="top-hud" aria-label="Portfolio status">
         <div className="hud-left">
           <div className="signal-mark-wrap">
-            <img src="/manus-storage/vice-signal-mark_62213c0b.png" alt="Vice Signal logo" className="signal-mark" />
+            <img src={portableMedia.signalMark} alt="Vice Signal logo" className="signal-mark" />
           </div>
           <span className="hud-status"><Radio size={12} /> LIVE PROFILE</span>
           <span className="hud-divider" />
@@ -384,13 +379,12 @@ export default function Home() {
         <div className="hud-right">
           <a
             className="hud-cv-download"
-            href="/api/cv-download"
+            href={portableMedia.cv}
             download="Sikandar_Jadoon_AI_Automation_CV.pdf"
             aria-label="Download Sikandar Jadoon's CV"
           >
             <Download size={13} /> DOWNLOAD CV
           </a>
-          {isAuthenticated && user?.role === "admin" && <button type="button" className="hud-vault-link" onClick={() => setLocation("/vault")}>ASSET VAULT</button>}
           <div className={`hud-radio hud-radio-minimal ${isMuted ? "is-muted" : ""}`} aria-label="Radio station player">
             <button type="button" className="hud-radio-toggle" onClick={toggleAudio} aria-label={isMuted ? "Turn music on" : "Turn music off"}>{isMuted ? <VolumeX size={13} /> : <Volume2 size={13} />}<span><b className="music-prefix">MUSIC </b>{isMuted ? "OFF" : "ON"}</span></button>
             <button type="button" className="hud-radio-step" onClick={() => changeRadioStation(1)} aria-label={`Change track; current station is ${activeRadioStation.title}`}><span>TRACK</span><ChevronRight size={12} /></button>
@@ -579,7 +573,7 @@ function BootIntro({ heroArt, onComplete, onEnableAudio }: { heroArt: string; on
       <div className="boot-corner boot-corner-br" aria-hidden="true" />
 
       <div className="boot-topline">
-        <div className="boot-brand"><img src="/manus-storage/vice-signal-mark_62213c0b.png" alt="" /><span>VICE SIGNAL / ONLINE</span></div>
+        <div className="boot-brand"><img src={portableMedia.signalMark} alt="" /><span>VICE SIGNAL / ONLINE</span></div>
         <span>SESSION 01 — {String(progress).padStart(3, "0")}%</span>
       </div>
 
@@ -757,6 +751,7 @@ function ContactScreen({ onTypingCue, onSocialActivate, onMissionPassed, onValid
   const errorStateRef = useRef<ContactFormErrors>({});
   const [submissionSuccess, setSubmissionSuccess] = useState(false);
   const [notificationDelivered, setNotificationDelivered] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const successTimerRef = useRef<number | null>(null);
   const reduceMotion = useReducedMotion();
 
@@ -764,28 +759,12 @@ function ContactScreen({ onTypingCue, onSocialActivate, onMissionPassed, onValid
     if (successTimerRef.current !== null) window.clearTimeout(successTimerRef.current);
   }, []);
 
-  const contactMutation = trpc.contact.submit.useMutation({
-    onSuccess: ({ notificationDelivered }) => {
-      toast(notificationDelivered ? "MESSAGE TRANSMITTED — Sikandar has been notified." : "MESSAGE STORED — Sikandar will review it shortly.");
-      setForm({ name: "", email: "", subject: "", message: "" });
-      setFieldErrors({});
-      setTouchedFields({});
-      errorStateRef.current = {};
-      setNotificationDelivered(notificationDelivered);
-      setSubmissionSuccess(true);
-      onMissionPassed();
-      if (successTimerRef.current !== null) window.clearTimeout(successTimerRef.current);
-      successTimerRef.current = window.setTimeout(() => setSubmissionSuccess(false), CONTACT_SUCCESS_VISIBLE_MS);
-    },
-    onError: (error) => toast(error.message || "Message transmission failed. Please try again."),
-  });
-
   const copyEmail = async () => {
     await navigator.clipboard?.writeText(portfolioData.profile.email);
     toast("COMMS CHANNEL COPIED.");
   };
 
-  const submitContact = (event: FormEvent<HTMLFormElement>) => {
+  const submitContact = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const errors = validateContactForm(form);
     (Object.keys(form) as ContactField[]).forEach((field) => {
@@ -798,7 +777,24 @@ function ContactScreen({ onTypingCue, onSocialActivate, onMissionPassed, onValid
       toast("TRANSMISSION BLOCKED — resolve the marked intel.");
       return;
     }
-    contactMutation.mutate(form);
+    setIsSubmitting(true);
+    try {
+      const result = await submitContactTransmission(form);
+      toast("MESSAGE TRANSMITTED — Sikandar has been notified.");
+      setForm({ name: "", email: "", subject: "", message: "" });
+      setFieldErrors({});
+      setTouchedFields({});
+      errorStateRef.current = {};
+      setNotificationDelivered(result.notificationDelivered);
+      setSubmissionSuccess(true);
+      onMissionPassed();
+      if (successTimerRef.current !== null) window.clearTimeout(successTimerRef.current);
+      successTimerRef.current = window.setTimeout(() => setSubmissionSuccess(false), CONTACT_SUCCESS_VISIBLE_MS);
+    } catch (error) {
+      toast(error instanceof Error ? error.message : "Message transmission failed. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const updateField = (field: ContactField, value: string) => {
@@ -834,27 +830,27 @@ function ContactScreen({ onTypingCue, onSocialActivate, onMissionPassed, onValid
         <div className="contact-form-grid">
           <label className={fieldClass("name")}>
             <span>YOUR NAME</span>
-            <input value={form.name} onChange={(event) => updateField("name", event.target.value)} onBlur={() => validateOnBlur("name")} maxLength={120} placeholder="NAME" autoComplete="name" disabled={contactMutation.isPending} aria-invalid={Boolean(touchedFields.name && fieldErrors.name)} aria-describedby={touchedFields.name && fieldErrors.name ? errorId("name") : undefined} required />
+            <input value={form.name} onChange={(event) => updateField("name", event.target.value)} onBlur={() => validateOnBlur("name")} maxLength={120} placeholder="NAME" autoComplete="name" disabled={isSubmitting} aria-invalid={Boolean(touchedFields.name && fieldErrors.name)} aria-describedby={touchedFields.name && fieldErrors.name ? errorId("name") : undefined} required />
             <AnimatePresence initial={false}>{touchedFields.name && fieldErrors.name && <motion.small id={errorId("name")} className="contact-field-error" role="alert" initial={reduceMotion ? false : { opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: reduceMotion ? 0 : 0.16, ease: cinematicEase }}>{fieldErrors.name}</motion.small>}</AnimatePresence>
           </label>
           <label className={fieldClass("email")}>
             <span>EMAIL ADDRESS</span>
-            <input type="email" value={form.email} onChange={(event) => updateField("email", event.target.value)} onBlur={() => validateOnBlur("email")} maxLength={320} placeholder="EMAIL@EXAMPLE.COM" autoComplete="email" disabled={contactMutation.isPending} aria-invalid={Boolean(touchedFields.email && fieldErrors.email)} aria-describedby={touchedFields.email && fieldErrors.email ? errorId("email") : undefined} required />
+            <input type="email" value={form.email} onChange={(event) => updateField("email", event.target.value)} onBlur={() => validateOnBlur("email")} maxLength={320} placeholder="EMAIL@EXAMPLE.COM" autoComplete="email" disabled={isSubmitting} aria-invalid={Boolean(touchedFields.email && fieldErrors.email)} aria-describedby={touchedFields.email && fieldErrors.email ? errorId("email") : undefined} required />
             <AnimatePresence initial={false}>{touchedFields.email && fieldErrors.email && <motion.small id={errorId("email")} className="contact-field-error" role="alert" initial={reduceMotion ? false : { opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: reduceMotion ? 0 : 0.16, ease: cinematicEase }}>{fieldErrors.email}</motion.small>}</AnimatePresence>
           </label>
         </div>
         <label className={fieldClass("subject")}>
           <span>SUBJECT</span>
-          <input value={form.subject} onChange={(event) => updateField("subject", event.target.value)} onBlur={() => validateOnBlur("subject")} minLength={3} maxLength={180} placeholder="HOW CAN WE BUILD TOGETHER?" disabled={contactMutation.isPending} aria-invalid={Boolean(touchedFields.subject && fieldErrors.subject)} aria-describedby={touchedFields.subject && fieldErrors.subject ? errorId("subject") : undefined} required />
+          <input value={form.subject} onChange={(event) => updateField("subject", event.target.value)} onBlur={() => validateOnBlur("subject")} minLength={3} maxLength={180} placeholder="HOW CAN WE BUILD TOGETHER?" disabled={isSubmitting} aria-invalid={Boolean(touchedFields.subject && fieldErrors.subject)} aria-describedby={touchedFields.subject && fieldErrors.subject ? errorId("subject") : undefined} required />
           <AnimatePresence initial={false}>{touchedFields.subject && fieldErrors.subject && <motion.small id={errorId("subject")} className="contact-field-error" role="alert" initial={reduceMotion ? false : { opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: reduceMotion ? 0 : 0.16, ease: cinematicEase }}>{fieldErrors.subject}</motion.small>}</AnimatePresence>
         </label>
         <label className={fieldClass("message")}>
           <span>MESSAGE</span>
-          <textarea value={form.message} onChange={(event) => updateField("message", event.target.value)} onBlur={() => validateOnBlur("message")} minLength={10} maxLength={4000} placeholder="WRITE YOUR MESSAGE..." disabled={contactMutation.isPending} aria-invalid={Boolean(touchedFields.message && fieldErrors.message)} aria-describedby={touchedFields.message && fieldErrors.message ? errorId("message") : undefined} required />
+          <textarea value={form.message} onChange={(event) => updateField("message", event.target.value)} onBlur={() => validateOnBlur("message")} minLength={10} maxLength={4000} placeholder="WRITE YOUR MESSAGE..." disabled={isSubmitting} aria-invalid={Boolean(touchedFields.message && fieldErrors.message)} aria-describedby={touchedFields.message && fieldErrors.message ? errorId("message") : undefined} required />
           <AnimatePresence initial={false}>{touchedFields.message && fieldErrors.message && <motion.small id={errorId("message")} className="contact-field-error" role="alert" initial={reduceMotion ? false : { opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: reduceMotion ? 0 : 0.16, ease: cinematicEase }}>{fieldErrors.message}</motion.small>}</AnimatePresence>
         </label>
-        <button type="submit" className="contact-submit" disabled={contactMutation.isPending} aria-busy={contactMutation.isPending}>
-          {contactMutation.isPending ? <><Spinner className="contact-submit-spinner" aria-hidden="true" /> TRANSMITTING...</> : <><Send size={14} /> SEND MESSAGE</>}
+        <button type="submit" className="contact-submit" disabled={isSubmitting} aria-busy={isSubmitting}>
+          {isSubmitting ? <><Spinner className="contact-submit-spinner" aria-hidden="true" /> TRANSMITTING...</> : <><Send size={14} /> SEND MESSAGE</>}
         </button>
         <AnimatePresence initial={false}>
           {submissionSuccess && <motion.div
