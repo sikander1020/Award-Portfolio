@@ -57,7 +57,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--vice-pink); out
 
 .boot-intro { position: fixed; inset: 0; z-index: 60; overflow: hidden; isolation: isolate; background: #050507; color: var(--paper); }
 .boot-art, .boot-shade, .boot-scanlines { position: absolute; inset: -3%; pointer-events: none; }
-.boot-art { background-image: var(--boot-art, url("/manus-storage/user-gta-hero-pose_a5bf3574.webp")); background-position: 78% center; background-size: cover; filter: saturate(1.2) contrast(1.08); z-index: -4; }
+.boot-art { background-image: var(--boot-art); background-position: 78% center; background-size: cover; filter: saturate(1.2) contrast(1.08); z-index: -4; }
 .boot-shade { z-index: -3; background: linear-gradient(90deg, rgba(4,4,7,.95) 0%, rgba(5,5,8,.75) 32%, rgba(5,5,8,.20) 69%, rgba(5,5,8,.68) 100%), linear-gradient(0deg, rgba(4,4,7,.72), transparent 46%, rgba(4,4,7,.16)); }
 .boot-scanlines { z-index: -2; opacity: .21; background-image: repeating-linear-gradient(0deg, transparent 0 3px, rgba(255,255,255,.09) 3px 4px); mix-blend-mode: overlay; }
 .boot-corner { position: absolute; width: 52px; height: 52px; border-color: rgba(255,44,138,.9); z-index: 1; }.boot-corner-tl { top: 25px; left: 27px; border-top: 1px solid; border-left: 1px solid; }.boot-corner-br { right: 27px; bottom: 25px; border-right: 1px solid; border-bottom: 1px solid; }
