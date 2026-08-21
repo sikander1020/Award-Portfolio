@@ -1,3 +1,5 @@
+import { portableMedia } from "./portableMedia";
+
 /**
  * GTA VI portfolio replica personalization map.
  * All profile content below is sourced from Sikandar Jadoon's supplied CV,
@@ -59,32 +61,32 @@ export const portfolioData = {
   media: {
     // User-supplied and approved Hero motion source. Keep the static art as its poster/fallback.
     heroVideo: {
-      src: "/manus-storage/sikandar-hero-seamless-loop_67150277.mp4",
+      src: portableMedia.video.hero,
       ownerApproved: true,
     },
     sceneVideos: {
       about: {
-        src: "/manus-storage/sikandar-about-academy-seamless_b3d7b214.mp4",
+        src: portableMedia.video.aboutAcademy,
         ownerApproved: true,
       },
       academy: {
-        src: "/manus-storage/sikandar-about-academy-seamless_b3d7b214.mp4",
+        src: portableMedia.video.aboutAcademy,
         ownerApproved: true,
       },
       skills: {
-        src: "/manus-storage/sikandar-skills-seamless_10c06fd2.mp4",
+        src: portableMedia.video.skills,
         ownerApproved: true,
       },
       experience: {
-        src: "/manus-storage/sikandar-experience-original-quality_39e3eb8b.mp4",
+        src: portableMedia.video.experience,
         ownerApproved: true,
       },
       projects: {
-        src: "/manus-storage/sikandar-rooftop-seamless_b1cc01a8.mp4",
+        src: portableMedia.video.rooftop,
         ownerApproved: true,
       },
       contact: {
-        src: "/manus-storage/sikandar-rooftop-seamless_b1cc01a8.mp4",
+        src: portableMedia.video.rooftop,
         ownerApproved: true,
       },
     } as Partial<Record<ScreenId, SceneMotionVideo>>,
@@ -95,7 +97,7 @@ export const portfolioData = {
       navLabel: "START GAME",
       subtitle: "PLAYER ONE",
       title: "SIKANDAR AUTOMATES",
-      art: "/manus-storage/user-gta-hero-pose_a5bf3574.webp",
+      art: portableMedia.art.start,
       desktopFocus: "76%",
       mobileFocus: "84%",
       visualFit: "cover",
@@ -112,7 +114,7 @@ export const portfolioData = {
       navLabel: "ABOUT ME",
       subtitle: "CHARACTER FILE",
       title: "ABOUT",
-      art: "/manus-storage/user-gta-about-pose_4d2884ca.webp",
+      art: portableMedia.art.about,
       desktopFocus: "86%",
       mobileFocus: "80%",
       visualFit: "contain",
@@ -127,7 +129,7 @@ export const portfolioData = {
       navLabel: "SKILLS",
       subtitle: "SKILL TREE",
       title: "SKILLS",
-      art: "/manus-storage/user-gta-skills-pose_87080bf9.webp",
+      art: portableMedia.art.skills,
       desktopFocus: "79%",
       mobileFocus: "84%",
       visualFit: "cover",
@@ -142,7 +144,7 @@ export const portfolioData = {
       navLabel: "PROJECTS",
       subtitle: "MISSION SELECT",
       title: "PROJECTS",
-      art: "/manus-storage/user-gta-projects-pose_73e11eb7.webp",
+      art: portableMedia.art.projects,
       desktopFocus: "76%",
       mobileFocus: "81%",
       visualFit: "cover",
@@ -157,7 +159,7 @@ export const portfolioData = {
       navLabel: "EXPERIENCE",
       subtitle: "MISSION LOG",
       title: "EXPERIENCE",
-      art: "/manus-storage/user-gta-experience-pose_d56487d5.webp",
+      art: portableMedia.art.experience,
       desktopFocus: "78%",
       mobileFocus: "83%",
       visualFit: "cover",
@@ -172,7 +174,7 @@ export const portfolioData = {
       navLabel: "ACADEMY",
       subtitle: "TRAINING RECORD",
       title: "ACADEMY",
-      art: "/manus-storage/user-gta-about-pose_4d2884ca.webp",
+      art: portableMedia.art.about,
       desktopFocus: "86%",
       mobileFocus: "80%",
       visualFit: "contain",
@@ -187,7 +189,7 @@ export const portfolioData = {
       navLabel: "CONTACT",
       subtitle: "OPEN CHANNEL",
       title: "CONTACT",
-      art: "/manus-storage/user-gta-projects-pose_73e11eb7.webp",
+      art: portableMedia.art.projects,
       desktopFocus: "76%",
       mobileFocus: "81%",
       visualFit: "cover",

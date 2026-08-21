@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { portfolioData } from "./portfolioData";
+import { portableMedia } from "./portableMedia";
 
 describe("portfolioData real professional profile", () => {
   it("uses Sikandar's CV-verified identity and professional contact channel", () => {
@@ -63,19 +64,19 @@ describe("portfolioData real professional profile", () => {
   it("keeps the approved static Hero source and its mobile focal configuration", () => {
     const hero = portfolioData.screens.find((screen) => screen.id === "start");
     expect(hero).toMatchObject({
-      art: "/manus-storage/user-gta-hero-pose_a5bf3574.webp",
+      art: portableMedia.art.start,
       mobileFocus: "84%",
     });
   });
 
   it("maps each approved scene video only to its matching screen", () => {
-    const portraitVideo = "/manus-storage/sikandar-about-academy-seamless_b3d7b214.mp4";
-    const rooftopVideo = "/manus-storage/sikandar-rooftop-seamless_b1cc01a8.mp4";
+    const portraitVideo = portableMedia.video.aboutAcademy;
+    const rooftopVideo = portableMedia.video.rooftop;
     expect(portfolioData.media.sceneVideos).toMatchObject({
       about: { src: portraitVideo, ownerApproved: true },
       academy: { src: portraitVideo, ownerApproved: true },
-      skills: { src: "/manus-storage/sikandar-skills-seamless_10c06fd2.mp4", ownerApproved: true },
-      experience: { src: "/manus-storage/sikandar-experience-original-quality_39e3eb8b.mp4", ownerApproved: true },
+      skills: { src: portableMedia.video.skills, ownerApproved: true },
+      experience: { src: portableMedia.video.experience, ownerApproved: true },
       projects: { src: rooftopVideo, ownerApproved: true },
       contact: { src: rooftopVideo, ownerApproved: true },
     });
@@ -84,7 +85,7 @@ describe("portfolioData real professional profile", () => {
   it("uses user-approved scene sources and preserves the original-quality Experience clip", () => {
     expect(Object.values(portfolioData.media.sceneVideos).every((video) => video?.ownerApproved)).toBe(true);
     expect(portfolioData.media.sceneVideos.experience).toMatchObject({
-      src: "/manus-storage/sikandar-experience-original-quality_39e3eb8b.mp4",
+      src: portableMedia.video.experience,
     });
   });
 
