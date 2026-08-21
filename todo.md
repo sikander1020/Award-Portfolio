@@ -426,9 +426,9 @@
 
 ## GitHub upload, Vercel deployment and domain connection
 
-- [ ] Inspect the Award-Portfolio GitHub repository and confirm authenticated repository access.
-- [ ] Prepare the current portfolio project for upload to the Award-Portfolio repository.
-- [ ] Commit and push the complete portfolio source to the user's GitHub repository after confirmation.
+- [x] Inspect the Award-Portfolio GitHub repository and confirm authenticated repository access.
+- [x] Prepare the current portfolio project for upload to the Award-Portfolio repository.
+- [x] Commit and push the complete portfolio source to the user's GitHub repository after confirmation.
 - [ ] Deploy the committed repository through Vercel after confirmation.
 - [ ] Connect the user's specified custom domain in Vercel and provide the required DNS records.
 - [ ] Verify the live Vercel deployment and custom-domain routing.
@@ -460,4 +460,11 @@
 - [x] Replace synthesized experience labels and periods with only source-backed project and learning evidence.
 - [x] Remove the unverified remote-work location claim and re-audit profile copy for source traceability.
 - [x] Neutralize any non-source-backed personalized HUD value and explicitly separate game styling from professional facts.
-- [ ] Upload the GitHub-ready source tree to Award-Portfolio through the authenticated repository session and verify the resulting initial commit.
+- [x] Upload the GitHub-ready source tree to Award-Portfolio through the authenticated repository session and verify the resulting initial commit.
+- [x] Assess and prepare the GitHub repository for a Vercel-compatible deployment architecture before creating the production deployment.
+- [x] Fix Vercel's incorrect frontend root/build configuration so `client/index.html` resolves `client/src/main.tsx` during production builds.
+- [x] Correct Vercel's output directory so the live root route serves `dist/public/index.html` instead of exposing `dist/index.js` source.
+- [ ] Audit and restore the contact submission, CV download, database notification, and media storage flows for Vercel-compatible serverless deployment.
+- [ ] Select and configure a free hosting architecture that preserves the interactive portfolio and essential contact functionality.
+- [ ] Diagnose and restore the currently broken public portfolio deployment before further hosting migration changes.
+- [x] Update frontend media URLs and contact-form API wiring for an always-on Vercel deployment without Manus-only routes.
