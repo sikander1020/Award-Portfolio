@@ -93,6 +93,13 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--vice-pink); out
 }
 @keyframes mobile-city-light-gleam { 0%, 100% { opacity: .5; filter: brightness(.86); } 48% { opacity: 1; filter: brightness(1.42); } 68% { opacity: .68; filter: brightness(1.04); } }
 @keyframes mobile-city-window-glow { from { opacity: .42; filter: drop-shadow(0 0 4px rgba(255,207,103,.5)); } to { opacity: .88; filter: drop-shadow(0 0 12px rgba(255,207,103,.9)); } }
+@media (max-width: 390px) {
+  .night-city-lights::before { left: 43%; bottom: 1%; height: 31%; opacity: .8; }
+  .night-city-lights-a { top: 56%; left: 45%; }
+  .night-city-lights-b { top: 68%; left: 58%; }
+  .night-city-lights-c { top: 57%; right: 8%; }
+  .night-city-lights-d { right: 11%; bottom: 10%; }
+}
 
 .boot-intro { position: fixed; inset: 0; z-index: 60; overflow: hidden; isolation: isolate; background: #050507; color: var(--paper); }
 .boot-art, .boot-shade, .boot-scanlines { position: absolute; inset: -3%; pointer-events: none; }

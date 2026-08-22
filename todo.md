@@ -527,3 +527,9 @@
 - [x] Inspect mobile night-mode layer placement, opacity, and scale against the portrait and content flow.
 - [x] Strengthen and reposition the mobile city-light clusters so the night effect is clearly visible without obscuring copy.
 - [x] Validate the corrected mobile night mode, reduced-motion fallback, tests, and production build before publishing.
+
+## Small-screen responsive visual clarity
+
+- [x] Audit the 360px and 390px night-mode stages for content collision, portrait visibility, and city-light placement.
+- [x] Refine compact viewport spacing, scene focus, and city-light density so effects remain visible without reducing legibility.
+- [x] Validate compact mobile viewports, reduced-motion behavior, tests, and production build before publishing.
