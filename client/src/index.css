@@ -55,6 +55,24 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--vice-pink); out
   color: var(--paper);
 }
 
+/* Local-time cinematic tint. It affects only visual scene layers, keeping approved
+   content contrast, desktop composition, and manual radio controls unchanged. */
+.scene-backdrop { transition: filter 760ms var(--ease-out); }
+.scene-backdrop::after { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity 760ms var(--ease-out), background 760ms var(--ease-out); }
+.vice-portfolio[data-time-mode="dawn"] .scene-backdrop { filter: saturate(1.06) brightness(1.03); }
+.vice-portfolio[data-time-mode="dawn"] .scene-backdrop::after { opacity: .36; background: linear-gradient(118deg, rgba(255,184,112,.20), transparent 44%), linear-gradient(0deg, rgba(102,70,160,.18), transparent 58%); }
+.vice-portfolio[data-time-mode="dawn"] .ambient-bloom { background: radial-gradient(circle at 70% 24%, rgba(255,178,104,.25), transparent 25%), radial-gradient(circle at 42% 84%, rgba(167,125,255,.13), transparent 33%); }
+.vice-portfolio[data-time-mode="day"] .scene-backdrop { filter: saturate(1.12) brightness(1.07); }
+.vice-portfolio[data-time-mode="day"] .scene-backdrop::after { opacity: .22; background: linear-gradient(118deg, rgba(126,204,255,.20), transparent 48%), linear-gradient(0deg, rgba(255,239,180,.09), transparent 56%); }
+.vice-portfolio[data-time-mode="day"] .ambient-bloom { background: radial-gradient(circle at 72% 22%, rgba(120,204,255,.19), transparent 24%), radial-gradient(circle at 61% 85%, rgba(255,232,133,.11), transparent 30%); }
+.vice-portfolio[data-time-mode="sunset"] .scene-backdrop { filter: saturate(1.14) contrast(1.03); }
+.vice-portfolio[data-time-mode="sunset"] .scene-backdrop::after { opacity: .31; background: linear-gradient(118deg, rgba(255,112,78,.23), transparent 48%), linear-gradient(0deg, rgba(255,177,104,.13), transparent 58%); }
+.vice-portfolio[data-time-mode="sunset"] .ambient-bloom { background: radial-gradient(circle at 74% 28%, rgba(255,91,116,.26), transparent 24%), radial-gradient(circle at 61% 84%, rgba(255,163,93,.15), transparent 31%); }
+.vice-portfolio[data-time-mode="night"] .scene-backdrop { filter: saturate(.9) brightness(.88) contrast(1.06); }
+.vice-portfolio[data-time-mode="night"] .scene-backdrop::after { opacity: .42; background: linear-gradient(118deg, rgba(40,66,151,.24), transparent 51%), linear-gradient(0deg, rgba(47,20,91,.24), transparent 62%); }
+.vice-portfolio[data-time-mode="night"] .ambient-bloom { background: radial-gradient(circle at 74% 28%, rgba(111,78,255,.20), transparent 24%), radial-gradient(circle at 66% 84%, rgba(43,109,255,.18), transparent 31%); }
+@media (prefers-reduced-motion: reduce) { .scene-backdrop, .scene-backdrop::after { transition: none; } }
+
 .boot-intro { position: fixed; inset: 0; z-index: 60; overflow: hidden; isolation: isolate; background: #050507; color: var(--paper); }
 .boot-art, .boot-shade, .boot-scanlines { position: absolute; inset: -3%; pointer-events: none; }
 .boot-art { background-image: var(--boot-art); background-position: 78% center; background-size: cover; filter: saturate(1.2) contrast(1.08); z-index: -4; }

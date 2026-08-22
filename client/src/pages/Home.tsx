@@ -44,6 +44,7 @@ import { shouldRenderHeroMotion } from "@/lib/heroMotion";
 import { getMobileMotionDurations } from "@/lib/mobileMotion";
 import { canLaunchGithubRepository, PROJECT_LAUNCH_DURATION_MS } from "@/lib/projectLaunch";
 import { getSectionMissionTitle, MENU_SECTION_LOADING_DURATION_MS, MENU_SECTION_REVEAL_DELAY_MS, shouldRunMenuTransition } from "@/lib/sectionTransition";
+import { getLocalTimeMode, shouldApplyLocalTimeRadioPreset } from "@/lib/timeMode";
 import { useIsMobile } from "@/hooks/useMobile";
 
 const screenIndex = Object.fromEntries(portfolioData.screens.map((screen, index) => [screen.id, index]));
@@ -59,7 +60,7 @@ function useLiveClock() {
     return () => window.clearInterval(interval);
   }, []);
 
-  return time.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  return time;
 }
 
 export default function Home() {
@@ -76,7 +77,8 @@ export default function Home() {
   );
   const [isMuted, setIsMuted] = useState(false);
   const [hasUserMuted, setHasUserMuted] = useState(false);
-  const [radioStationIndex, setRadioStationIndex] = useState(0);
+  const [radioStationIndex, setRadioStationIndex] = useState<number>(() => getLocalTimeMode(new Date().getHours()).radioStationIndex);
+  const [hasUserSelectedRadioStation, setHasUserSelectedRadioStation] = useState(false);
   const [wantedLevel, setWantedLevel] = useState(0);
   const [missionPassed, setMissionPassed] = useState<string | null>(null);
   const [isMissionPreview, setIsMissionPreview] = useState(false);
@@ -100,7 +102,9 @@ export default function Home() {
   const portraitY = useTransform(smoothY, (value) => value * 0.72);
   const contentX = useTransform(smoothX, (value) => value * 0.18);
   const contentY = useTransform(smoothY, (value) => value * 0.12);
-  const time = useLiveClock();
+  const localTime = useLiveClock();
+  const time = localTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  const timeMode = getLocalTimeMode(localTime.getHours());
   const activeScreen = useMemo(
     () => portfolioData.screens.find((screen) => screen.id === activeId) ?? portfolioData.screens[0],
     [activeId],
@@ -167,6 +171,11 @@ export default function Home() {
   }, [radioStationIndex]);
 
   useEffect(() => {
+    if (!shouldApplyLocalTimeRadioPreset({ hasUserMuted, hasUserSelectedRadioStation })) return;
+    setRadioStationIndex(timeMode.radioStationIndex);
+  }, [timeMode.id, hasUserMuted, hasUserSelectedRadioStation]);
+
+  useEffect(() => {
     const handleVisibilityChange = () => {
       const audio = backgroundAudioRef.current;
       if (document.hidden) {
@@ -215,6 +224,7 @@ export default function Home() {
   };
 
   const changeRadioStation = (direction: -1 | 1) => {
+    setHasUserSelectedRadioStation(true);
     setRadioStationIndex((current) => cycleRadioStationIndex(current, direction));
   };
 
@@ -320,6 +330,7 @@ export default function Home() {
   return (
     <main
       className="vice-portfolio"
+      data-time-mode={timeMode.id}
       onKeyDown={handleKeyDown}
       onPointerMove={handlePointerParallax}
       onPointerLeave={() => {

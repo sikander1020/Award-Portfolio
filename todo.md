@@ -507,3 +507,10 @@
 - [x] Generate, trim, encode, and release-host the seven original mission cue assets.
 - [x] Map the selected Mission Select title to its dedicated cue while retaining mute, hidden-tab, and cleanup behavior.
 - [x] Add regression coverage and validate all seven transitions before publishing.
+
+## Local-time day/night visual mode
+
+- [x] Define explicit local-time periods with accessible GTA cinematic tint and radio ambience presets.
+- [x] Apply the active local-time visual mode to the portfolio stage without changing approved desktop composition.
+- [x] Adapt background radio station selection only when the visitor has not manually chosen a track or muted music.
+- [x] Add automated coverage and validate desktop/mobile rendering plus manual audio control preservation before publishing.
