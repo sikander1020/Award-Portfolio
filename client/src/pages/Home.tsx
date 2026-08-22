@@ -43,7 +43,7 @@ import { BACKGROUND_MUSIC_VOLUME, attemptAudioPlayback, attemptBackgroundAutopla
 import { shouldRenderHeroMotion } from "@/lib/heroMotion";
 import { getMobileMotionDurations } from "@/lib/mobileMotion";
 import { canLaunchGithubRepository, PROJECT_LAUNCH_DURATION_MS } from "@/lib/projectLaunch";
-import { MENU_GLITCH_DURATION_MS, MENU_GLITCH_REVEAL_DELAY_MS, shouldRunMenuGlitch } from "@/lib/sectionTransition";
+import { MENU_SECTION_LOADING_DURATION_MS, MENU_SECTION_REVEAL_DELAY_MS, shouldRunMenuTransition } from "@/lib/sectionTransition";
 import { useIsMobile } from "@/hooks/useMobile";
 
 const screenIndex = Object.fromEntries(portfolioData.screens.map((screen, index) => [screen.id, index]));
@@ -82,11 +82,11 @@ export default function Home() {
   const [isMissionPreview, setIsMissionPreview] = useState(false);
   const [heroVideoFailed, setHeroVideoFailed] = useState(false);
   const [sceneVideoFailures, setSceneVideoFailures] = useState<Partial<Record<ScreenId, boolean>>>({});
-  const [isMenuGlitching, setIsMenuGlitching] = useState(false);
+  const [loadingSection, setLoadingSection] = useState<ScreenId | null>(null);
   const backgroundAudioRef = useRef<HTMLAudioElement>(null);
   const backgroundAudioStartAttemptedRef = useRef(false);
   const resumeBackgroundAfterVisibilityRef = useRef(false);
-  const glitchSequenceRef = useRef(0);
+  const sectionTransitionSequenceRef = useRef(0);
   const reduceMotion = useReducedMotion();
   const isMobile = useIsMobile();
   const pointerX = useMotionValue(0);
@@ -205,25 +205,25 @@ export default function Home() {
   const registerWantedLevelError = () => setWantedLevel((current) => Math.min(5, current + 1));
 
   useEffect(() => () => {
-    glitchSequenceRef.current += 1;
+    sectionTransitionSequenceRef.current += 1;
   }, []);
 
   const switchScreen = (id: ScreenId, cinematic = true) => {
     if (id === activeId) return;
     setMobileNavOpen(false);
-    if (!cinematic || !shouldRunMenuGlitch({ from: activeId, to: id, reduceMotion: Boolean(reduceMotion) })) {
+    if (!cinematic || !shouldRunMenuTransition({ from: activeId, to: id, reduceMotion: Boolean(reduceMotion) })) {
       setActiveId(id);
       return;
     }
 
-    const sequence = ++glitchSequenceRef.current;
-    setIsMenuGlitching(true);
+    const sequence = ++sectionTransitionSequenceRef.current;
+    setLoadingSection(id);
     window.setTimeout(() => {
-      if (glitchSequenceRef.current === sequence) setActiveId(id);
-    }, MENU_GLITCH_REVEAL_DELAY_MS);
+      if (sectionTransitionSequenceRef.current === sequence) setActiveId(id);
+    }, MENU_SECTION_REVEAL_DELAY_MS);
     window.setTimeout(() => {
-      if (glitchSequenceRef.current === sequence) setIsMenuGlitching(false);
-    }, MENU_GLITCH_DURATION_MS);
+      if (sectionTransitionSequenceRef.current === sequence) setLoadingSection(null);
+    }, MENU_SECTION_LOADING_DURATION_MS);
   };
 
   const handleMissionPassed = (projectTitle: string) => {
@@ -508,17 +508,10 @@ export default function Home() {
           </div>
         </aside>
 
+      <AnimatePresence>
+        {loadingSection && <SectionMissionLoadingOverlay screen={portfolioData.screens.find((screen) => screen.id === loadingSection) ?? activeScreen} />}
+      </AnimatePresence>
       <motion.section className="content-stage" style={{ x: contentX, y: contentY }} aria-live="polite">
-          <AnimatePresence>
-            {isMenuGlitching && <motion.div
-              className="menu-glitch-layer"
-              initial={reduceMotion ? false : { opacity: 0, x: -10 }}
-              animate={reduceMotion ? { opacity: 0 } : { opacity: [0, 0.95, 0.36, 0], x: [-10, 11, -5, 0] }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: MENU_GLITCH_DURATION_MS / 1000, ease: "linear" }}
-              aria-hidden="true"
-            />}
-          </AnimatePresence>
           <AnimatePresence initial={false} mode="wait">
             <motion.div
               key={`chapter-${activeScreen.id}`}
@@ -768,6 +761,22 @@ function ProjectLaunchOverlay({ project }: { project: (typeof portfolioData.proj
     <motion.section className="project-launch-overlay" initial={reduceMotion ? false : { opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: reduceMotion ? 0 : 0.18, ease: cinematicEase }} role="status" aria-live="assertive">
       <div className="project-launch-grid" aria-hidden="true" />
       <div className="project-launch-card"><span>VICE SIGNAL / SECURE UPLINK</span><h2>LAUNCHING<br /><em>MISSION</em></h2><p>{project.title.toUpperCase()}</p><div className="project-launch-track"><i /></div><small>CONNECTING TO VERIFIED GITHUB REPOSITORY</small></div>
+    </motion.section>
+  );
+}
+
+function SectionMissionLoadingOverlay({ screen }: { screen: { navLabel: string; subtitle: string } }) {
+  const reduceMotion = useReducedMotion();
+  return (
+    <motion.section className="section-mission-overlay" initial={reduceMotion ? false : { opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: reduceMotion ? 0 : 0.12, ease: cinematicEase }} role="status" aria-live="polite">
+      <div className="section-mission-grid" aria-hidden="true" />
+      <motion.div className="section-mission-card" initial={reduceMotion ? false : { opacity: 0, y: 14, scale: .98 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: reduceMotion ? 0 : 0.2, ease: cinematicEase }}>
+        <span>VICE SIGNAL / MISSION SELECT</span>
+        <h2>LOADING<br /><em>{screen.navLabel}</em></h2>
+        <p>PREPARING {screen.subtitle}</p>
+        <div className="section-mission-track"><i /></div>
+        <small>SYNCING CITY GRID • PLEASE STAND BY</small>
+      </motion.div>
     </motion.section>
   );
 }

@@ -1,7 +1,7 @@
-export const MENU_GLITCH_DURATION_MS = 200;
-export const MENU_GLITCH_REVEAL_DELAY_MS = 70;
+export const MENU_SECTION_LOADING_DURATION_MS = 680;
+export const MENU_SECTION_REVEAL_DELAY_MS = 420;
 
-export function shouldRunMenuGlitch({
+export function shouldRunMenuTransition({
   from,
   to,
   reduceMotion,

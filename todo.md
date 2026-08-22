@@ -489,3 +489,7 @@
 - [x] Add staggered section card entrances and resettable Skills segmented-bar fills when the Skills section opens.
 - [x] Animate the active pink menu accent smoothly between selected menu options on desktop and mobile navigation.
 - [x] Add targeted tests and verify transition performance plus Skills background balance across mobile and desktop before publishing.
+- [x] Reduce Skills shell and stat-card opacity enough for the approved Skills video/portrait to remain clearly visible behind readable copy.
+- [x] Replace the short CRT glitch with a compact GTA-style mission-loading card, sweep, and progress handoff before every explicit section selection.
+- [x] Preserve instant keyboard navigation and reduced-motion behavior while adding the cinematic transition for deliberate pointer menu selections.
+- [x] Add tests and verify section mission-loading flow plus Skills video visibility on mobile and desktop before publishing.
