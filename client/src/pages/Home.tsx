@@ -121,6 +121,9 @@ export default function Home() {
   const renderMotionVideo = renderHeroMotion || renderSceneMotion;
   const activeMotionVideo = renderHeroMotion ? portfolioData.media.heroVideo : activeSceneVideo;
   const activeRadioStation = radioStations[radioStationIndex];
+  const missionLoadingCueSrc = loadingSection
+    ? portableMedia.audio.missionTuning[loadingSection]
+    : portableMedia.audio.missionTuning.start;
 
   const enableAudio = () => {
     backgroundAudioStartAttemptedRef.current = true;
@@ -328,7 +331,7 @@ export default function Home() {
       aria-label="Interactive portfolio game menu"
     >
       <audio ref={backgroundAudioRef} loop preload="metadata"><source src={activeRadioStation.src} type="audio/mpeg" /></audio>
-      <audio ref={missionLoadingAudioRef} preload="auto"><source src={portableMedia.audio.missionTuning} type="audio/mpeg" /></audio>
+      <audio key={`mission-cue-${loadingSection ?? "idle"}`} ref={missionLoadingAudioRef} preload="auto"><source src={missionLoadingCueSrc} type="audio/mpeg" /></audio>
       <AnimatePresence>
         {isBooting && <BootIntro heroArt={heroArt} onComplete={() => setIsBooting(false)} onEnableAudio={enableAudio} />}
       </AnimatePresence>

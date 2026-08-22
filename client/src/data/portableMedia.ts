@@ -1,3 +1,5 @@
+import type { ScreenId } from "./portfolioData";
+
 /**
 
  * Production media uses the portfolio origin. Vercel rewrites this route to
@@ -63,7 +65,15 @@ export const portableMedia = {
     bootReady: releaseAsset("vice-boot-ready_f783e2aa.mp3"),
     
     missionPassed: releaseAsset("vice-mission-passed_fb89ebaf.mp3"),
-    missionTuning: releaseAsset("mission-radio-tuning.mp3"),
+    missionTuning: {
+      start: releaseAsset("mission-city-arrival.mp3"),
+      about: releaseAsset("mission-character-file.mp3"),
+      skills: releaseAsset("mission-operation-skills.mp3"),
+      projects: releaseAsset("mission-project-heist.mp3"),
+      experience: releaseAsset("mission-career-run.mp3"),
+      academy: releaseAsset("mission-training-grounds.mp3"),
+      contact: releaseAsset("mission-open-channel.mp3"),
+    } satisfies Record<ScreenId, string>,
   },
   
 } as const;

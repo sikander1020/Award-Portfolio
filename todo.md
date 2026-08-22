@@ -500,3 +500,10 @@
 - [x] Play the cue only during deliberate section mission loading and stop it cleanly once the selected section opens.
 - [x] Respect manual MUSIC OFF, hidden-tab behavior, and the existing no-interaction-SFX policy outside mission loading.
 - [x] Add focused tests and verify the mission cue timing and mute behavior before publishing.
+
+## Mission-specific radio tuning cues
+
+- [x] Define a distinct subtle radio-tuning cue motif for City Arrival, Character File, Operation: Skills, Project Heist, Career Run, Training Grounds, and Open Channel.
+- [x] Generate, trim, encode, and release-host the seven original mission cue assets.
+- [x] Map the selected Mission Select title to its dedicated cue while retaining mute, hidden-tab, and cleanup behavior.
+- [x] Add regression coverage and validate all seven transitions before publishing.
