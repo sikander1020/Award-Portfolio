@@ -32,9 +32,9 @@ describe("attemptAudioPlayback", () => {
     await expect(attemptBackgroundAutoplay(null, 0.24)).resolves.toBe(false);
   });
 
-  it("plays UI cues only for deliberate button actions and never overrides a manual mute", () => {
+  it("keeps every interaction SFX disabled so clicks cannot generate duplicate or delayed cues", () => {
     expect(shouldPlayUiAudio(true)).toBe(false);
-    expect(shouldPlayUiAudio(false, "button")).toBe(true);
+    expect(shouldPlayUiAudio(false, "button")).toBe(false);
     expect(shouldPlayUiAudio(false, "typing")).toBe(false);
     expect(shouldPlayUiAudio(false, "ambient")).toBe(false);
     expect(shouldPlayTypingCue({ isMuted: false, lastCueAt: 0, now: 1000 })).toBe(false);

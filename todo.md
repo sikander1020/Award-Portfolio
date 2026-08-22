@@ -472,3 +472,6 @@
 - [x] Lower the UI click-cue volume while preserving a clear but subtle interaction acknowledgement.
 - [x] Restore background music startup with a first-interaction fallback that preserves an explicit manual Music Off preference.
 - [x] Add targeted test coverage and browser verification for UI cue, mute, and background music behavior.
+- [x] Trace and eliminate any duplicate or delayed UI audio emitted by Projects and other supported portfolio actions.
+- [x] Add regression coverage proving that one supported user action can trigger no more than one UI cue.
+- [ ] Verify the corrected single-cue behavior on the live Vercel project interactions.

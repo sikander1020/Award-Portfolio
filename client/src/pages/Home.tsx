@@ -37,7 +37,7 @@ import { CONTACT_SUCCESS_VISIBLE_MS, getContactSuccessCopy } from "@/lib/contact
 import { submitContactTransmission } from "@/lib/contactDelivery";
 import { shouldEscalateWantedLevel, validateContactField, validateContactForm, type ContactField, type ContactFormErrors, type ContactFormValues } from "@/lib/contactValidation";
 import { cycleRadioStationIndex, radioStations } from "@/lib/radio";
-import { BACKGROUND_MUSIC_VOLUME, UI_CUE_VOLUME, attemptAudioPlayback, attemptBackgroundAutoplay, shouldAutoStartBackgroundAudio, shouldPlayTypingCue, shouldPlayUiAudio, shouldStartBlockedAutoplayOnUserInteraction } from "@/lib/audio";
+import { BACKGROUND_MUSIC_VOLUME, attemptAudioPlayback, attemptBackgroundAutoplay, shouldAutoStartBackgroundAudio, shouldStartBlockedAutoplayOnUserInteraction } from "@/lib/audio";
 import { shouldRenderHeroMotion } from "@/lib/heroMotion";
 import { getMobileMotionDurations } from "@/lib/mobileMotion";
 import { canLaunchGithubRepository, PROJECT_LAUNCH_DURATION_MS } from "@/lib/projectLaunch";
@@ -79,12 +79,7 @@ export default function Home() {
   const [heroVideoFailed, setHeroVideoFailed] = useState(false);
   const [sceneVideoFailures, setSceneVideoFailures] = useState<Partial<Record<ScreenId, boolean>>>({});
   const backgroundAudioRef = useRef<HTMLAudioElement>(null);
-  const navAudioRef = useRef<HTMLAudioElement>(null);
-  const bootAudioRef = useRef<HTMLAudioElement>(null);
-  const missionAudioRef = useRef<HTMLAudioElement>(null);
-  const typingAudioRef = useRef<HTMLAudioElement>(null);
   const backgroundAudioStartAttemptedRef = useRef(false);
-  const lastTypingCueAtRef = useRef(-Infinity);
   const reduceMotion = useReducedMotion();
   const isMobile = useIsMobile();
   const pointerX = useMotionValue(0);
@@ -160,11 +155,6 @@ export default function Home() {
     void attemptAudioPlayback(backgroundAudioRef.current, BACKGROUND_MUSIC_VOLUME);
   }, [radioStationIndex]);
 
-  const playCue = (audioRef: React.RefObject<HTMLAudioElement | null>, volume = UI_CUE_VOLUME) => {
-    if (!shouldPlayUiAudio(isMuted)) return;
-    void attemptAudioPlayback(audioRef.current, volume);
-  };
-
   const toggleAudio = () => {
     if (isMuted) {
       enableAudio();
@@ -177,19 +167,16 @@ export default function Home() {
 
   const changeRadioStation = (direction: -1 | 1) => {
     setRadioStationIndex((current) => cycleRadioStationIndex(current, direction));
-    playCue(navAudioRef);
   };
 
   const registerWantedLevelError = () => setWantedLevel((current) => Math.min(5, current + 1));
 
-  const switchScreen = (id: ScreenId, shouldPlayNavigationCue = false) => {
+  const switchScreen = (id: ScreenId) => {
     if (id === activeId) return;
-    if (shouldPlayNavigationCue) playCue(navAudioRef);
     setActiveId(id);
   };
 
   const handleMissionPassed = (projectTitle: string) => {
-    playCue(missionAudioRef);
     setMissionPassed(projectTitle);
   };
 
@@ -202,19 +189,11 @@ export default function Home() {
     }
 
     setLaunchingProject(project);
-    playCue(bootAudioRef);
     window.requestAnimationFrame(() => {
       window.setTimeout(() => {
         if (project.href) window.location.assign(project.href);
       }, PROJECT_LAUNCH_DURATION_MS);
     });
-  };
-
-  const playContactTypingCue = () => {
-    const now = performance.now();
-    if (!shouldPlayTypingCue({ isMuted, now, lastCueAt: lastTypingCueAtRef.current })) return;
-    lastTypingCueAtRef.current = now;
-    void attemptAudioPlayback(typingAudioRef.current, 0.09);
   };
 
   const handlePointerParallax = (event: ReactPointerEvent<HTMLElement>) => {
@@ -286,12 +265,8 @@ export default function Home() {
       aria-label="Interactive portfolio game menu"
     >
       <audio ref={backgroundAudioRef} src={activeRadioStation.src} loop autoPlay preload="auto" />
-      <audio ref={navAudioRef} src={portableMedia.audio.navigation} preload="auto" />
-      <audio ref={bootAudioRef} src={portableMedia.audio.bootReady} preload="auto" />
-      <audio ref={missionAudioRef} src={portableMedia.audio.missionPassed} preload="auto" />
-      <audio ref={typingAudioRef} src={portableMedia.audio.navigation} preload="auto" />
       <AnimatePresence>
-        {isBooting && <BootIntro heroArt={heroArt} onComplete={() => setIsBooting(false)} onEnableAudio={() => { enableAudio(); window.setTimeout(() => playCue(bootAudioRef), 70); }} />}
+        {isBooting && <BootIntro heroArt={heroArt} onComplete={() => setIsBooting(false)} onEnableAudio={enableAudio} />}
       </AnimatePresence>
       {!isBooting && !reduceMotion && <div className="scene-video-warmup" aria-hidden="true">
         {sceneVideoWarmupSources.map((src) => <video key={src} src={src} preload="auto" muted playsInline />)}
@@ -415,7 +390,7 @@ export default function Home() {
                     key={screen.id}
                     type="button"
                     className={`nav-item ${active ? "is-active" : ""}`}
-                    onClick={() => switchScreen(screen.id, true)}
+                    onClick={() => switchScreen(screen.id)}
                     aria-pressed={active}
                     whileHover={reduceMotion ? undefined : { x: 4 }}
                     whileTap={reduceMotion ? undefined : { scale: 0.98 }}
@@ -470,13 +445,13 @@ export default function Home() {
               exit={reduceMotion ? { opacity: 0 } : isMobile ? { opacity: 0, x: -12, y: -2 } : { opacity: 0, x: -28, y: -6, filter: "blur(5px)" }}
               transition={panelTransition}
             >
-              {activeId === "start" && <StartScreen onEnter={() => switchScreen("about", true)} />}
+              {activeId === "start" && <StartScreen onEnter={() => switchScreen("about")} />}
               {activeId === "about" && <AboutScreen />}
               {activeId === "skills" && <SkillsScreen />}
               {activeId === "projects" && <ProjectsScreen selectedProject={selectedProject} onSelectProject={setSelectedProject} onMissionPassed={handleMissionPassed} onLaunchRepository={launchGithubRepository} />}
               {activeId === "experience" && <ExperienceScreen />}
               {activeId === "academy" && <AcademyScreen />}
-              {activeId === "contact" && <ContactScreen onTypingCue={playContactTypingCue} onSocialActivate={() => playCue(navAudioRef, 0.28)} onMissionPassed={handleContactMissionPassed} onValidationError={registerWantedLevelError} />}
+              {activeId === "contact" && <ContactScreen onTypingCue={() => undefined} onSocialActivate={() => undefined} onMissionPassed={handleContactMissionPassed} onValidationError={registerWantedLevelError} />}
             </motion.div>
           </AnimatePresence>
 
@@ -495,7 +470,7 @@ export default function Home() {
         <nav className="bottom-map radar-menu" aria-label="Radar section navigation">
           <div className="map-grid" />
           <MapPin size={14} className="map-pin" />
-          {portfolioData.screens.map((screen, index) => <button key={screen.id} type="button" className={`radar-node ${activeId === screen.id ? "is-active" : ""}`} style={{ "--radar-x": `${radarPositions[index][0]}%`, "--radar-y": `${radarPositions[index][1]}%` } as CSSProperties} onClick={() => switchScreen(screen.id, true)} aria-label={`Navigate to ${screen.navLabel}`} aria-current={activeId === screen.id ? "page" : undefined}><span>{String(index + 1).padStart(2, "0")}</span></button>)}
+          {portfolioData.screens.map((screen, index) => <button key={screen.id} type="button" className={`radar-node ${activeId === screen.id ? "is-active" : ""}`} style={{ "--radar-x": `${radarPositions[index][0]}%`, "--radar-y": `${radarPositions[index][1]}%` } as CSSProperties} onClick={() => switchScreen(screen.id)} aria-label={`Navigate to ${screen.navLabel}`} aria-current={activeId === screen.id ? "page" : undefined}><span>{String(index + 1).padStart(2, "0")}</span></button>)}
           <span className="map-label">{activeScreen.navLabel.toUpperCase()}</span>
         </nav>
       </section>

@@ -45,9 +45,9 @@ export async function attemptBackgroundAutoplay(audio: AutoplayableAudio | null,
 
 export type UiAudioSource = "button" | "ambient" | "typing";
 
-/** UI cues are reserved for a deliberate supported button action. */
-export function shouldPlayUiAudio(isMuted: boolean, source: UiAudioSource = "button") {
-  return !isMuted && source === "button";
+/** Interaction SFX stay disabled so a click can never create a duplicated or delayed cue. */
+export function shouldPlayUiAudio(_isMuted: boolean, _source: UiAudioSource = "button") {
+  return false;
 }
 
 /** Compatibility safeguard: typing never emits the navigation cue. */
