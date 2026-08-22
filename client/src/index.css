@@ -101,6 +101,20 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--vice-pink); out
   .night-city-lights-d { right: 11%; bottom: 10%; }
 }
 
+/* Wet-street colour echoes support the night city lights without covering portfolio copy. */
+.night-rain-reflections { position: absolute; inset: 0; z-index: 1; overflow: hidden; pointer-events: none; mix-blend-mode: screen; opacity: .58; }
+.night-rain-reflections::before { content: ""; position: absolute; top: 55%; right: -8%; bottom: -9%; left: 27%; background: repeating-linear-gradient(105deg, transparent 0 28px, rgba(255,78,163,.2) 29px 31px, transparent 32px 53px), repeating-linear-gradient(73deg, transparent 0 42px, rgba(134,215,255,.19) 43px 45px, transparent 46px 73px); mask-image: linear-gradient(180deg, transparent 0, rgba(0,0,0,.55) 21%, #000 100%); -webkit-mask-image: linear-gradient(180deg, transparent 0, rgba(0,0,0,.55) 21%, #000 100%); filter: blur(.35px); transform: translate3d(0, 0, 0); }
+.night-rain-reflections::after { content: ""; position: absolute; right: -4%; bottom: 0; left: 34%; height: 39%; background: radial-gradient(ellipse at 26% 76%, rgba(255,62,146,.36), transparent 37%), radial-gradient(ellipse at 69% 56%, rgba(109,213,255,.34), transparent 33%), linear-gradient(180deg, transparent, rgba(80,152,200,.1)); filter: blur(14px); opacity: .72; animation: wet-street-shimmer 5.8s ease-in-out infinite alternate; }
+.night-rain-reflections i { position: absolute; display: block; width: 2px; height: 125px; border-radius: 999px; background: linear-gradient(180deg, transparent, rgba(219,242,255,.54), rgba(255,111,182,.58), transparent); filter: blur(.45px) drop-shadow(0 0 8px rgba(133,214,255,.62)); transform-origin: center; }
+.night-rain-reflection-a { --rain-angle: 4deg; right: 28%; bottom: 4%; animation: rain-reflection-glide 4.7s ease-in-out infinite alternate; }
+.night-rain-reflection-b { --rain-angle: -3deg; right: 48%; bottom: -1%; height: 164px; animation: rain-reflection-glide 6.2s ease-in-out .9s infinite alternate; }
+.night-rain-reflection-c { --rain-angle: 5deg; right: 12%; bottom: 8%; height: 108px; animation: rain-reflection-glide 5.3s ease-in-out 1.4s infinite alternate; }
+@keyframes wet-street-shimmer { from { opacity: .38; transform: translate3d(-1.4%, 0, 0) scaleX(.96); } to { opacity: .84; transform: translate3d(1.4%, 0, 0) scaleX(1.04); } }
+@keyframes rain-reflection-glide { from { opacity: .26; transform: translate3d(0, 5%, 0) scaleY(.76) rotate(var(--rain-angle, 0deg)); } to { opacity: .9; transform: translate3d(0, -4%, 0) scaleY(1.08) rotate(var(--rain-angle, 0deg)); } }
+@media (max-width: 767px) { .night-rain-reflections { opacity: .72; }.night-rain-reflections::before { top: 61%; left: 35%; bottom: -7%; }.night-rain-reflections::after { left: 41%; height: 34%; opacity: .82; }.night-rain-reflection-a { right: 29%; bottom: 3%; }.night-rain-reflection-b { right: 50%; bottom: -1%; height: 142px; }.night-rain-reflection-c { right: 11%; bottom: 8%; } }
+@media (max-width: 390px) { .night-rain-reflections::before { top: 66%; left: 41%; }.night-rain-reflections::after { left: 44%; height: 30%; }.night-rain-reflection-a { right: 31%; }.night-rain-reflection-b { right: 53%; height: 126px; }.night-rain-reflection-c { right: 12%; height: 90px; } }
+@media (prefers-reduced-motion: reduce) { .night-rain-reflections::after, .night-rain-reflections i { animation: none; } }
+
 .boot-intro { position: fixed; inset: 0; z-index: 60; overflow: hidden; isolation: isolate; background: #050507; color: var(--paper); }
 .boot-art, .boot-shade, .boot-scanlines { position: absolute; inset: -3%; pointer-events: none; }
 .boot-art { background-image: var(--boot-art); background-position: 78% center; background-size: cover; filter: saturate(1.2) contrast(1.08); z-index: -4; }

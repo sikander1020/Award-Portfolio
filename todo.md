@@ -533,3 +533,10 @@
 - [x] Audit the 360px and 390px night-mode stages for content collision, portrait visibility, and city-light placement.
 - [x] Refine compact viewport spacing, scene focus, and city-light density so effects remain visible without reducing legibility.
 - [x] Validate compact mobile viewports, reduced-motion behavior, tests, and production build before publishing.
+
+## Night-only animated rain reflections
+
+- [x] Define a subtle wet-street reflection and rain-sheen layer for the local night preset.
+- [x] Implement GPU-friendly animated reflections behind content with responsive desktop and compact-mobile placement.
+- [x] Preserve reduced-motion, touch, portrait, and copy readability behavior while adding the rain atmosphere.
+- [x] Validate night rendering on desktop and compact mobile viewports, tests, and production build before publishing.

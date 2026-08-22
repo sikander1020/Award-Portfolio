@@ -404,6 +404,11 @@ export default function Home() {
         />}
       </AnimatePresence>
       <motion.div className="ambient-bloom" style={{ x: portraitX, y: portraitY }} aria-hidden="true" />
+      {shouldRenderNightCityLights(timeMode.id) && <div className="night-rain-reflections" aria-hidden="true">
+        <i className="night-rain-reflection-a" />
+        <i className="night-rain-reflection-b" />
+        <i className="night-rain-reflection-c" />
+      </div>}
       {shouldRenderNightCityLights(timeMode.id) && <div className="night-city-lights" aria-hidden="true">
         <i className="night-city-lights-a" />
         <i className="night-city-lights-b" />
