@@ -514,3 +514,10 @@
 - [x] Apply the active local-time visual mode to the portfolio stage without changing approved desktop composition.
 - [x] Adapt background radio station selection only when the visitor has not manually chosen a track or muted music.
 - [x] Add automated coverage and validate desktop/mobile rendering plus manual audio control preservation before publishing.
+
+## Night-only dynamic city lights
+
+- [x] Define a subtle animated city-window and neon-light layer that activates only in the local night preset.
+- [x] Implement GPU-friendly night-light shimmer with pointer events disabled and no content overlap.
+- [x] Respect reduced-motion preferences and preserve mobile readability plus approved scene framing.
+- [x] Add focused coverage and validate desktop/mobile night-mode rendering before publishing.

@@ -31,3 +31,8 @@ export function shouldApplyLocalTimeRadioPreset({
 }) {
   return !hasUserMuted && !hasUserSelectedRadioStation;
 }
+
+/** City lights are a night-scene enhancement and never mount in brighter time presets. */
+export function shouldRenderNightCityLights(timeModeId: LocalTimeModeId) {
+  return timeModeId === "night";
+}

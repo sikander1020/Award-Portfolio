@@ -73,6 +73,17 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--vice-pink); out
 .vice-portfolio[data-time-mode="night"] .ambient-bloom { background: radial-gradient(circle at 74% 28%, rgba(111,78,255,.20), transparent 24%), radial-gradient(circle at 66% 84%, rgba(43,109,255,.18), transparent 31%); }
 @media (prefers-reduced-motion: reduce) { .scene-backdrop, .scene-backdrop::after { transition: none; } }
 
+/* Night-only city windows and neon signs remain behind content and never block interaction. */
+.night-city-lights { position: absolute; inset: 0; z-index: 1; overflow: hidden; pointer-events: none; mix-blend-mode: screen; opacity: .74; }
+.night-city-lights i { position: absolute; display: block; width: 3px; height: 3px; border-radius: 1px; background: #fff0bc; box-shadow: 0 0 7px rgba(255,223,139,.92); }
+.night-city-lights-a { top: 31%; left: 48%; box-shadow: 0 0 7px rgba(255,223,139,.92), 20px 9px 0 #bfeaff, 20px 9px 7px rgba(134,215,255,.92), 42px -3px 0 #ffb0d0, 42px -3px 8px rgba(255,109,174,.82), 69px 15px 0 #fff0bc, 69px 15px 7px rgba(255,223,139,.88); }
+.night-city-lights-b { top: 49%; left: 59%; box-shadow: 0 0 8px rgba(255,168,221,.9), 14px 12px 0 #c9f4ff, 14px 12px 7px rgba(137,225,255,.9), 37px 4px 0 #fff0bc, 37px 4px 8px rgba(255,223,139,.86), 54px 17px 0 #ffb0d0, 54px 17px 8px rgba(255,109,174,.82); }
+.night-city-lights-c { top: 21%; right: 14%; box-shadow: 0 0 7px rgba(137,225,255,.9), -13px 14px 0 #fff0bc, -13px 14px 7px rgba(255,223,139,.85), -34px 3px 0 #c9f4ff, -34px 3px 8px rgba(137,225,255,.88), -56px 20px 0 #ffb0d0, -56px 20px 7px rgba(255,109,174,.8); }
+.night-city-lights-d { bottom: 18%; right: 25%; box-shadow: 0 0 8px rgba(255,223,139,.9), -18px -10px 0 #c9f4ff, -18px -10px 7px rgba(137,225,255,.86), -41px 8px 0 #ffb0d0, -41px 8px 8px rgba(255,109,174,.78), -62px -5px 0 #fff0bc, -62px -5px 7px rgba(255,223,139,.84); }
+@media (prefers-reduced-motion: no-preference) { .night-city-lights-a { animation: city-light-gleam 4.9s ease-in-out infinite alternate; }.night-city-lights-b { animation: city-light-gleam 6.3s ease-in-out .8s infinite alternate; }.night-city-lights-c { animation: city-light-gleam 5.6s ease-in-out 1.4s infinite alternate; }.night-city-lights-d { animation: city-light-gleam 7.1s ease-in-out .3s infinite alternate; } }
+@keyframes city-light-gleam { 0%, 100% { opacity: .28; filter: brightness(.66); } 46% { opacity: .9; filter: brightness(1.22); } 62% { opacity: .46; filter: brightness(.82); } }
+@media (max-width: 767px) { .night-city-lights { opacity: .56; }.night-city-lights-a { left: 42%; }.night-city-lights-b { left: 55%; }.night-city-lights-c { right: 10%; }.night-city-lights-d { right: 18%; } }
+
 .boot-intro { position: fixed; inset: 0; z-index: 60; overflow: hidden; isolation: isolate; background: #050507; color: var(--paper); }
 .boot-art, .boot-shade, .boot-scanlines { position: absolute; inset: -3%; pointer-events: none; }
 .boot-art { background-image: var(--boot-art); background-position: 78% center; background-size: cover; filter: saturate(1.2) contrast(1.08); z-index: -4; }

@@ -44,7 +44,7 @@ import { shouldRenderHeroMotion } from "@/lib/heroMotion";
 import { getMobileMotionDurations } from "@/lib/mobileMotion";
 import { canLaunchGithubRepository, PROJECT_LAUNCH_DURATION_MS } from "@/lib/projectLaunch";
 import { getSectionMissionTitle, MENU_SECTION_LOADING_DURATION_MS, MENU_SECTION_REVEAL_DELAY_MS, shouldRunMenuTransition } from "@/lib/sectionTransition";
-import { getLocalTimeMode, shouldApplyLocalTimeRadioPreset } from "@/lib/timeMode";
+import { getLocalTimeMode, shouldApplyLocalTimeRadioPreset, shouldRenderNightCityLights } from "@/lib/timeMode";
 import { useIsMobile } from "@/hooks/useMobile";
 
 const screenIndex = Object.fromEntries(portfolioData.screens.map((screen, index) => [screen.id, index]));
@@ -403,6 +403,12 @@ export default function Home() {
         />}
       </AnimatePresence>
       <motion.div className="ambient-bloom" style={{ x: portraitX, y: portraitY }} aria-hidden="true" />
+      {shouldRenderNightCityLights(timeMode.id) && <div className="night-city-lights" aria-hidden="true">
+        <i className="night-city-lights-a" />
+        <i className="night-city-lights-b" />
+        <i className="night-city-lights-c" />
+        <i className="night-city-lights-d" />
+      </div>}
       <AnimatePresence initial={false} mode="sync">
         <motion.div
           key={`wipe-${activeScreen.id}`}
