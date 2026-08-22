@@ -1,11 +1,12 @@
 export type PlayableAudio = Pick<HTMLAudioElement, "currentTime" | "volume" | "play"> & Partial<Pick<HTMLAudioElement, "muted">>;
+export type MissionCueAudio = PlayableAudio & Partial<Pick<HTMLAudioElement, "src" | "load" | "pause">>;
 export type AutoplayableAudio = PlayableAudio & Pick<HTMLAudioElement, "muted">;
 
 /** Kept intentionally quiet so the interface acknowledges actions without overpowering music. */
 export const UI_CUE_VOLUME = 0.18;
 export const BACKGROUND_MUSIC_VOLUME = 0.18;
-export const MISSION_LOADING_CUE_VOLUME = 0.13;
-export const MISSION_LOADING_BACKGROUND_VOLUME = 0.075;
+export const MISSION_LOADING_CUE_VOLUME = 0.24;
+export const MISSION_LOADING_BACKGROUND_VOLUME = 0.055;
 
 export async function attemptAudioPlayback(audio: PlayableAudio | null, volume: number) {
   if (!audio) return false;
@@ -14,6 +15,29 @@ export async function attemptAudioPlayback(audio: PlayableAudio | null, volume: 
     audio.volume = volume;
     // This helper is used only from deliberate user interactions. Explicitly
     // release a prior autoplay mute before starting the audible track or cue.
+    if ("muted" in audio) audio.muted = false;
+    await audio.play();
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Starts the selected Mission Select cue inside the pointer event that opened
+ * the loader. This retains browser user activation, unlike effect-only playback
+ * which can be rejected after React schedules the loading state update.
+ */
+export async function playMissionLoadingCue(audio: MissionCueAudio | null, source: string, volume: number) {
+  if (!audio) return false;
+  try {
+    audio.pause?.();
+    if (audio.src !== source) {
+      audio.src = source;
+      audio.load?.();
+    }
+    audio.currentTime = 0;
+    audio.volume = volume;
     if ("muted" in audio) audio.muted = false;
     await audio.play();
     return true;

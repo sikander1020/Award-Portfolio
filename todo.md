@@ -565,3 +565,13 @@
 - [x] Define a GTA-style session-closing thank-you overlay that does not navigate visitors away from the portfolio.
 - [x] Replace desktop and mobile EXIT GAME toast behavior with the animated farewell sequence and clear return control.
 - [x] Validate exit, dismiss, keyboard, desktop, mobile, reduced-motion, tests, and production build behavior before publishing.
+
+## Boot loading-screen audio restoration
+
+- [x] Close boot overlay audio work without changes after user clarification that the initial loading screen already works as intended.
+
+## Mission Select transition audio correction
+
+- [x] Audit the 1.5-second section-transition cue lifecycle, audible level, source mapping, and background mix during Skills, Projects, and other pointer navigations.
+- [x] Make dedicated Mission Select cues reliably audible for every section while preserving manual MUSIC OFF, hidden-tab pause, and multi-track radio playback.
+- [x] Add regression coverage and validate all transition audio paths, desktop/mobile controls, tests, and production build before publishing.

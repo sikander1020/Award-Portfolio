@@ -39,7 +39,7 @@ import { CONTACT_SUCCESS_VISIBLE_MS, getContactSuccessCopy } from "@/lib/contact
 import { submitContactTransmission } from "@/lib/contactDelivery";
 import { shouldEscalateWantedLevel, validateContactField, validateContactForm, type ContactField, type ContactFormErrors, type ContactFormValues } from "@/lib/contactValidation";
 import { cycleRadioStationIndex, radioStations } from "@/lib/radio";
-import { BACKGROUND_MUSIC_VOLUME, MISSION_LOADING_BACKGROUND_VOLUME, MISSION_LOADING_CUE_VOLUME, attemptAudioPlayback, attemptBackgroundAutoplay, resumeBackgroundAudio, shouldAutoStartBackgroundAudio, shouldPlayMissionLoadingCue, shouldResumeBackgroundAudio, shouldStartBlockedAutoplayOnUserInteraction } from "@/lib/audio";
+import { BACKGROUND_MUSIC_VOLUME, MISSION_LOADING_BACKGROUND_VOLUME, MISSION_LOADING_CUE_VOLUME, attemptAudioPlayback, attemptBackgroundAutoplay, playMissionLoadingCue, resumeBackgroundAudio, shouldAutoStartBackgroundAudio, shouldPlayMissionLoadingCue, shouldResumeBackgroundAudio, shouldStartBlockedAutoplayOnUserInteraction } from "@/lib/audio";
 import { shouldRenderHeroMotion } from "@/lib/heroMotion";
 import { getMobileMotionDurations } from "@/lib/mobileMotion";
 import { canLaunchGithubRepository, PROJECT_LAUNCH_DURATION_MS } from "@/lib/projectLaunch";
@@ -127,10 +127,6 @@ export default function Home() {
   const renderMotionVideo = renderHeroMotion || renderSceneMotion;
   const activeMotionVideo = renderHeroMotion ? portfolioData.media.heroVideo : activeSceneVideo;
   const activeRadioStation = radioStations[radioStationIndex];
-  const missionLoadingCueSrc = loadingSection
-    ? portableMedia.audio.missionTuning[loadingSection]
-    : portableMedia.audio.missionTuning.start;
-
   const enableAudio = () => {
     backgroundAudioStartAttemptedRef.current = true;
     setHasUserMuted(false);
@@ -205,14 +201,12 @@ export default function Home() {
 
   useEffect(() => {
     const cue = missionLoadingAudioRef.current;
-    if (!loadingSection || !shouldPlayMissionLoadingCue({ isMuted, hasUserMuted, isDocumentHidden: document.hidden })) {
+    if (!loadingSection) {
       cue?.pause();
       return;
     }
-
-    void attemptAudioPlayback(cue, MISSION_LOADING_CUE_VOLUME);
     return () => cue?.pause();
-  }, [loadingSection, isMuted, hasUserMuted]);
+  }, [loadingSection]);
 
   useEffect(() => {
     const background = backgroundAudioRef.current;
@@ -259,6 +253,9 @@ export default function Home() {
     }
 
     const sequence = ++sectionTransitionSequenceRef.current;
+    if (shouldPlayMissionLoadingCue({ isMuted, hasUserMuted, isDocumentHidden: document.hidden })) {
+      void playMissionLoadingCue(missionLoadingAudioRef.current, portableMedia.audio.missionTuning[id], MISSION_LOADING_CUE_VOLUME);
+    }
     setLoadingSection(id);
     window.setTimeout(() => {
       if (sectionTransitionSequenceRef.current === sequence) setActiveId(id);
@@ -358,7 +355,7 @@ export default function Home() {
       aria-label="Interactive portfolio game menu"
     >
       <audio key={`radio-${activeRadioStation.id}`} ref={backgroundAudioRef} loop preload="metadata"><source src={activeRadioStation.src} type="audio/mpeg" /></audio>
-      <audio key={`mission-cue-${loadingSection ?? "idle"}`} ref={missionLoadingAudioRef} preload="auto"><source src={missionLoadingCueSrc} type="audio/mpeg" /></audio>
+      <audio ref={missionLoadingAudioRef} preload="auto" />
       <AnimatePresence>
         {isBooting && <BootIntro heroArt={heroArt} onComplete={() => setIsBooting(false)} onEnableAudio={enableAudio} />}
       </AnimatePresence>
