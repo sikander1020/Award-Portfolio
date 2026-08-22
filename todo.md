@@ -552,3 +552,10 @@
 - [x] Remove the city-light, rain-reflection, and mobile Night FX preview layers from the portfolio background.
 - [x] Restore the clean original visual stage without affecting approved video, content, navigation, or radio behavior.
 - [x] Validate restored desktop and mobile composition, tests, and production build before publishing.
+
+## Distinct section loading and radio restoration
+
+- [x] Audit the current seven mission loading variants, transition cue mapping, radio station registry, and manual track controls.
+- [x] Give every portfolio section a distinct Mission Select motion composition while retaining the approved 1.5-second duration and reduced-motion policy.
+- [x] Restore clearly selectable multi-track radio playback and preserve manual MUSIC OFF, track selection, hidden-tab pause, and loading-cue behavior.
+- [x] Add coverage and verify unique transitions plus audible multi-track playback on desktop and mobile before publishing.

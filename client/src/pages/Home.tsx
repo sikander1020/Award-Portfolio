@@ -39,11 +39,11 @@ import { CONTACT_SUCCESS_VISIBLE_MS, getContactSuccessCopy } from "@/lib/contact
 import { submitContactTransmission } from "@/lib/contactDelivery";
 import { shouldEscalateWantedLevel, validateContactField, validateContactForm, type ContactField, type ContactFormErrors, type ContactFormValues } from "@/lib/contactValidation";
 import { cycleRadioStationIndex, radioStations } from "@/lib/radio";
-import { BACKGROUND_MUSIC_VOLUME, MISSION_LOADING_CUE_VOLUME, attemptAudioPlayback, attemptBackgroundAutoplay, resumeBackgroundAudio, shouldAutoStartBackgroundAudio, shouldPlayMissionLoadingCue, shouldResumeBackgroundAudio, shouldStartBlockedAutoplayOnUserInteraction } from "@/lib/audio";
+import { BACKGROUND_MUSIC_VOLUME, MISSION_LOADING_BACKGROUND_VOLUME, MISSION_LOADING_CUE_VOLUME, attemptAudioPlayback, attemptBackgroundAutoplay, resumeBackgroundAudio, shouldAutoStartBackgroundAudio, shouldPlayMissionLoadingCue, shouldResumeBackgroundAudio, shouldStartBlockedAutoplayOnUserInteraction } from "@/lib/audio";
 import { shouldRenderHeroMotion } from "@/lib/heroMotion";
 import { getMobileMotionDurations } from "@/lib/mobileMotion";
 import { canLaunchGithubRepository, PROJECT_LAUNCH_DURATION_MS } from "@/lib/projectLaunch";
-import { getSectionMissionTitle, MENU_SECTION_LOADING_DURATION_MS, MENU_SECTION_REVEAL_DELAY_MS, shouldRunMenuTransition } from "@/lib/sectionTransition";
+import { getSectionMissionTitle, getSectionMissionVariant, MENU_SECTION_LOADING_DURATION_MS, MENU_SECTION_REVEAL_DELAY_MS, shouldRunMenuTransition } from "@/lib/sectionTransition";
 import { getLocalTimeMode, shouldApplyLocalTimeRadioPreset } from "@/lib/timeMode";
 import { useIsMobile } from "@/hooks/useMobile";
 
@@ -212,6 +212,15 @@ export default function Home() {
     return () => cue?.pause();
   }, [loadingSection, isMuted, hasUserMuted]);
 
+  useEffect(() => {
+    const background = backgroundAudioRef.current;
+    if (!background || isMuted || hasUserMuted) return;
+    background.volume = loadingSection ? MISSION_LOADING_BACKGROUND_VOLUME : BACKGROUND_MUSIC_VOLUME;
+    return () => {
+      background.volume = BACKGROUND_MUSIC_VOLUME;
+    };
+  }, [loadingSection, isMuted, hasUserMuted]);
+
   const toggleAudio = () => {
     if (isMuted) {
       enableAudio();
@@ -226,6 +235,11 @@ export default function Home() {
   const changeRadioStation = (direction: -1 | 1) => {
     setHasUserSelectedRadioStation(true);
     setRadioStationIndex((current) => cycleRadioStationIndex(current, direction));
+  };
+
+  const selectRadioStation = (index: number) => {
+    setHasUserSelectedRadioStation(true);
+    setRadioStationIndex(index);
   };
 
   const registerWantedLevelError = () => setWantedLevel((current) => Math.min(5, current + 1));
@@ -341,7 +355,7 @@ export default function Home() {
       tabIndex={0}
       aria-label="Interactive portfolio game menu"
     >
-      <audio ref={backgroundAudioRef} loop preload="metadata"><source src={activeRadioStation.src} type="audio/mpeg" /></audio>
+      <audio key={`radio-${activeRadioStation.id}`} ref={backgroundAudioRef} loop preload="metadata"><source src={activeRadioStation.src} type="audio/mpeg" /></audio>
       <audio key={`mission-cue-${loadingSection ?? "idle"}`} ref={missionLoadingAudioRef} preload="auto"><source src={missionLoadingCueSrc} type="audio/mpeg" /></audio>
       <AnimatePresence>
         {isBooting && <BootIntro heroArt={heroArt} onComplete={() => setIsBooting(false)} onEnableAudio={enableAudio} />}
@@ -434,9 +448,12 @@ export default function Home() {
           >
             <Download size={13} /> DOWNLOAD CV
           </a>
-          <div className={`hud-radio hud-radio-minimal ${isMuted ? "is-muted" : ""}`} aria-label="Radio station player">
+          <div className={`hud-radio ${isMuted ? "is-muted" : ""}`} aria-label="Radio station player">
             <button type="button" className="hud-radio-toggle" onClick={toggleAudio} aria-label={isMuted ? "Turn music on" : "Turn music off"}>{isMuted ? <VolumeX size={13} /> : <Volume2 size={13} />}<span><b className="music-prefix">MUSIC </b>{isMuted ? "OFF" : "ON"}</span></button>
-            <button type="button" className="hud-radio-step" onClick={() => changeRadioStation(1)} aria-label={`Change track; current station is ${activeRadioStation.title}`}><span>TRACK</span><ChevronRight size={12} /></button>
+            <button type="button" className="hud-radio-station" onClick={() => changeRadioStation(1)} aria-label={`Change track; current station is ${activeRadioStation.title}`}><span>{activeRadioStation.id}</span><strong>{activeRadioStation.title}</strong><ChevronRight size={12} /></button>
+            <span className="hud-radio-presets" aria-label="Choose radio station">
+              {radioStations.map((station, index) => <button key={station.id} type="button" className={index === radioStationIndex ? "is-selected" : ""} onClick={() => selectRadioStation(index)} aria-pressed={index === radioStationIndex} aria-label={`Play ${station.title}`}>{station.id}</button>)}
+            </span>
             <span className="sr-only" aria-live="polite">{activeRadioStation.title}</span>
           </div>
           <span className="hud-time"><Clock3 size={13} /> {time}</span>
@@ -795,15 +812,17 @@ function ProjectLaunchOverlay({ project }: { project: (typeof portfolioData.proj
 
 function SectionMissionLoadingOverlay({ screen }: { screen: { id: ScreenId; navLabel: string; subtitle: string } }) {
   const reduceMotion = useReducedMotion();
+  const variant = getSectionMissionVariant(screen.id);
   return (
-    <motion.section className="section-mission-overlay" initial={reduceMotion ? false : { opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: reduceMotion ? 0 : 0.12, ease: cinematicEase }} role="status" aria-live="polite">
+    <motion.section className={`section-mission-overlay is-${variant.id}`} initial={reduceMotion ? false : { opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: reduceMotion ? 0 : 0.12, ease: cinematicEase }} role="status" aria-live="polite">
       <div className="section-mission-grid" aria-hidden="true" />
+      <div className="section-mission-motif" aria-hidden="true"><i /><i /><i /></div>
       <motion.div className="section-mission-card" initial={reduceMotion ? false : { opacity: 0, y: 14, scale: .98 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: reduceMotion ? 0 : 0.2, ease: cinematicEase }}>
-        <span>VICE SIGNAL / MISSION SELECT</span>
+        <span>VICE SIGNAL / {variant.code}</span>
         <h2>LOADING<br /><em>{getSectionMissionTitle(screen.id)}</em></h2>
         <p>PREPARING {screen.subtitle}</p>
         <div className="section-mission-track"><i /></div>
-        <small>SYNCING CITY GRID • PLEASE STAND BY</small>
+        <small>{variant.signal}</small>
       </motion.div>
     </motion.section>
   );

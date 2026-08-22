@@ -4,7 +4,8 @@ export type AutoplayableAudio = PlayableAudio & Pick<HTMLAudioElement, "muted">;
 /** Kept intentionally quiet so the interface acknowledges actions without overpowering music. */
 export const UI_CUE_VOLUME = 0.18;
 export const BACKGROUND_MUSIC_VOLUME = 0.18;
-export const MISSION_LOADING_CUE_VOLUME = 0.075;
+export const MISSION_LOADING_CUE_VOLUME = 0.13;
+export const MISSION_LOADING_BACKGROUND_VOLUME = 0.075;
 
 export async function attemptAudioPlayback(audio: PlayableAudio | null, volume: number) {
   if (!audio) return false;

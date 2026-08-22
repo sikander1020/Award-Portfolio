@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getSectionMissionTitle, MENU_SECTION_LOADING_DURATION_MS, MENU_SECTION_REVEAL_DELAY_MS, shouldRunMenuTransition } from "./sectionTransition";
+import { getSectionMissionTitle, getSectionMissionVariant, MENU_SECTION_LOADING_DURATION_MS, MENU_SECTION_REVEAL_DELAY_MS, sectionMissionVariants, shouldRunMenuTransition } from "./sectionTransition";
 
 describe("section transition policy", () => {
   it("uses a compact mission-loading envelope before revealing a new menu section", () => {
@@ -17,5 +17,13 @@ describe("section transition policy", () => {
     expect(getSectionMissionTitle("skills")).toBe("Operation: Skills");
     expect(getSectionMissionTitle("projects")).toBe("Project Heist");
     expect(getSectionMissionTitle("contact")).toBe("Open Channel");
+  });
+
+  it("gives each section a distinct loading composition instead of a shared static card", () => {
+    const variantIds = Object.values(sectionMissionVariants).map((variant) => variant.id);
+    expect(new Set(variantIds).size).toBe(7);
+    expect(getSectionMissionVariant("start").id).toBe("arrival");
+    expect(getSectionMissionVariant("projects").id).toBe("heist");
+    expect(getSectionMissionVariant("contact").id).toBe("signal");
   });
 });
