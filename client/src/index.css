@@ -265,13 +265,13 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--vice-pink); out
 .intel-grid dt { font-family: "Barlow Condensed", sans-serif; font-size: 10px; letter-spacing: .14em; color: rgba(255,255,255,.44); }
 .intel-grid dd { margin: 5px 0 0; font-family: "Barlow Condensed", sans-serif; letter-spacing: .05em; font-size: 14px; font-weight: 600; }
 
-.skills-card { width: min(100%, 570px); }
-.skills-list { margin-top: 24px; display: grid; gap: 15px; }
-.skill-topline { display: flex; justify-content: space-between; gap: 15px; color: rgba(255,255,255,.83); font-family: "Barlow Condensed", sans-serif; font-size: 14px; letter-spacing: .08em; }
-.skill-topline strong { color: rgba(255,255,255,.57); font-weight: 600; }
-.skill-meter { display: block; height: 5px; overflow: hidden; margin-top: 6px; background: rgba(255,255,255,.13); }
-.skill-meter i { display: block; width: 100%; height: 100%; transform-origin: left; animation: stat-fill 850ms var(--ease-out) both; }
-.skill-row:nth-child(2) i { animation-delay: 70ms; }.skill-row:nth-child(3) i { animation-delay: 120ms; }.skill-row:nth-child(4) i { animation-delay: 180ms; }.skill-row:nth-child(5) i { animation-delay: 240ms; }
+.skills-card { width: min(100%, 760px); }
+.skills-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 11px; margin-top: 24px; }
+.skill-card { display: grid; gap: 10px; min-width: 0; border: 1px solid rgba(255,255,255,.15); padding: 14px; background: rgba(15,15,20,.85); color: #fff; text-align: left; box-shadow: inset 0 0 0 1px rgba(255,255,255,.025), 0 12px 26px rgba(0,0,0,.16); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); transition: border-color 180ms var(--ease-out), background 180ms var(--ease-out), box-shadow 180ms var(--ease-out), transform 180ms var(--ease-out); }
+.skill-card:hover, .skill-card:focus-visible, .skill-card.is-selected { border-color: var(--skill-accent); background: linear-gradient(135deg, color-mix(in srgb, var(--skill-accent) 16%, rgba(15,15,20,.92)), rgba(15,15,20,.91)); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--skill-accent) 44%, transparent), 0 0 24px color-mix(in srgb, var(--skill-accent) 30%, transparent), 0 15px 30px rgba(0,0,0,.25); outline: none; }
+.skill-card:hover { transform: translateY(-3px); }.skill-card:active { transform: scale(.98); }
+.skill-card-topline { display: grid; grid-template-columns: 26px 1fr auto; align-items: center; gap: 7px; color: rgba(255,255,255,.56); font-family: "Barlow Condensed", sans-serif; font-size: 9px; font-weight: 700; letter-spacing: .13em; }.skill-number { color: var(--skill-accent); }.skill-category { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }.skill-status { border: 1px solid color-mix(in srgb, var(--skill-accent) 68%, transparent); padding: 3px 5px; color: var(--skill-accent); font-size: 8px; letter-spacing: .08em; white-space: nowrap; }
+.skill-name { color: #fff; font-family: "Barlow Condensed", sans-serif; font-size: 17px; font-weight: 600; letter-spacing: .065em; }.skill-bar { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 3px; }.skill-bar i { display: block; height: 6px; background: rgba(255,255,255,.12); box-shadow: inset 0 0 0 1px rgba(255,255,255,.05); }.skill-bar i.is-filled { background: var(--skill-accent); box-shadow: 0 0 8px color-mix(in srgb, var(--skill-accent) 78%, transparent); }.skill-level { justify-self: end; color: rgba(255,255,255,.45); font-family: "Barlow Condensed", sans-serif; font-size: 9px; font-weight: 700; letter-spacing: .12em; }
 .micro-copy { margin: 24px 0 0; color: rgba(255,255,255,.48); font-family: "Barlow Condensed", sans-serif; font-size: 11px; letter-spacing: .1em; }
 
 .projects-layout { width: min(100%, 790px); display: grid; grid-template-columns: 230px 1fr; border: 1px solid rgba(255,255,255,.2); background: rgba(4,5,8,.54); backdrop-filter: blur(8px); box-shadow: 18px 25px 65px rgba(0,0,0,.25); }
@@ -405,6 +405,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--vice-pink); out
   .detail-card, .contact-card, .projects-layout { width: 100%; box-sizing: border-box; border-color: rgba(255,255,255,.19); background: rgba(15,15,18,.88); box-shadow: 0 16px 42px rgba(0,0,0,.35); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
   .detail-card, .contact-card { padding: 22px 18px; }.detail-card h2, .contact-card h2 { font-size: clamp(48px, 14vw, 68px); }
   .intel-grid { grid-template-columns: 1fr; }.intel-grid div:nth-child(odd) { border-right: 0; padding-right: 0; }.intel-grid div:nth-child(even) { padding-left: 0; }
+  .skills-list { grid-template-columns: 1fr; gap: 10px; }.skill-card { padding: 14px 13px; }.skill-name { font-size: 16px; }
 
   .projects-layout { display: flex; flex-direction: column; gap: 0; overflow: hidden; }
   .project-select { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; border: 0; border-bottom: 1px solid rgba(255,255,255,.16); background: rgba(0,0,0,.22); }

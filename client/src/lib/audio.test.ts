@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { BACKGROUND_MUSIC_VOLUME, UI_CUE_VOLUME, attemptAudioPlayback, attemptBackgroundAutoplay, shouldAutoStartBackgroundAudio, shouldPlayTypingCue, shouldPlayUiAudio, shouldStartBlockedAutoplayOnUserInteraction } from "./audio";
+import { BACKGROUND_MUSIC_VOLUME, UI_CUE_VOLUME, attemptAudioPlayback, attemptBackgroundAutoplay, resumeBackgroundAudio, shouldAutoStartBackgroundAudio, shouldPlayTypingCue, shouldPlayUiAudio, shouldResumeBackgroundAudio, shouldStartBlockedAutoplayOnUserInteraction } from "./audio";
 
 describe("attemptAudioPlayback", () => {
   it("starts a supplied audio element from the beginning at the requested volume", async () => {
@@ -22,6 +22,16 @@ describe("attemptAudioPlayback", () => {
     expect(audio.volume).toBe(0.24);
     expect(audio.muted).toBe(false);
     expect(play).toHaveBeenCalledTimes(1);
+  });
+
+  it("resumes a visibility-paused background track without resetting its progress", async () => {
+    const play = vi.fn().mockResolvedValue(undefined);
+    const audio = { currentTime: 47, volume: 0, muted: true, play };
+
+    await expect(resumeBackgroundAudio(audio, 0.18)).resolves.toBe(true);
+    expect(audio.currentTime).toBe(47);
+    expect(audio.volume).toBe(0.18);
+    expect(audio.muted).toBe(false);
   });
 
   it("fails gracefully when browser playback is blocked or unavailable", async () => {
@@ -56,5 +66,12 @@ describe("attemptAudioPlayback", () => {
     expect(shouldStartBlockedAutoplayOnUserInteraction({ hasUserMuted: false, isPaused: true })).toBe(true);
     expect(shouldStartBlockedAutoplayOnUserInteraction({ hasUserMuted: true, isPaused: true })).toBe(false);
     expect(shouldStartBlockedAutoplayOnUserInteraction({ hasUserMuted: false, isPaused: false })).toBe(false);
+  });
+
+  it("resumes only a track that was actively playing before the tab became hidden", () => {
+    expect(shouldResumeBackgroundAudio({ isDocumentHidden: true, hasUserMuted: false, wasPlayingWhenHidden: true })).toBe(false);
+    expect(shouldResumeBackgroundAudio({ isDocumentHidden: false, hasUserMuted: true, wasPlayingWhenHidden: true })).toBe(false);
+    expect(shouldResumeBackgroundAudio({ isDocumentHidden: false, hasUserMuted: false, wasPlayingWhenHidden: false })).toBe(false);
+    expect(shouldResumeBackgroundAudio({ isDocumentHidden: false, hasUserMuted: false, wasPlayingWhenHidden: true })).toBe(true);
   });
 });

@@ -109,6 +109,17 @@ describe("portfolioData real professional profile", () => {
     });
   });
 
+  it("keeps Skills and Projects scene media fully framed rather than cover-cropped", () => {
+    const screens = Object.fromEntries(portfolioData.screens.map((screen) => [screen.id, screen]));
+    expect(screens.skills).toMatchObject({ visualFit: "contain", videoFit: "contain", mobileVideoFit: "contain" });
+    expect(screens.projects).toMatchObject({ visualFit: "contain", videoFit: "contain", mobileVideoFit: "contain" });
+  });
+
+  it("provides styled RPG stat metadata for every verified skill card", () => {
+    expect(portfolioData.skills).toHaveLength(5);
+    expect(portfolioData.skills.every((skill) => Boolean(skill.category) && Boolean(skill.status) && !("level" in skill))).toBe(true);
+  });
+
   it("uses the supplied rooftop video as a copy-safe Contact scene with full mobile composition", () => {
     const contact = portfolioData.screens.find((screen) => screen.id === "contact");
     expect(contact).toMatchObject({

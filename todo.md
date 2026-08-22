@@ -479,3 +479,8 @@
 - [x] Apply the requested dark blurred mobile card surface to STAT SHEET, CHARACTER FILE, MISSION SELECT, and related content panels.
 - [x] Stack mobile stage elements with a collision-free vertical flow and responsive padding without hiding the approved scene composition.
 - [x] Add targeted layout tests and verify mobile plus desktop renderings before publishing.
+- [x] Correct over-zoomed or blurred Skills and Projects scene media framing on mobile and desktop without changing the source assets.
+- [x] Rebuild Skills into a GTA/Cyberpunk RPG stat-card grid with segmented neon bars, category markers, and RPG status tags.
+- [x] Make the Skills layout a two-column responsive desktop grid and readable stacked mobile cards with neon hover and focus treatment.
+- [x] Pause background music when the portfolio tab is hidden or browser minimized, preserving explicit user mute and intended resume behavior.
+- [x] Add focused tests and verify Skills, Projects, and audio visibility behavior across mobile and desktop before publishing.

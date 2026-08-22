@@ -39,7 +39,7 @@ import { CONTACT_SUCCESS_VISIBLE_MS, getContactSuccessCopy } from "@/lib/contact
 import { submitContactTransmission } from "@/lib/contactDelivery";
 import { shouldEscalateWantedLevel, validateContactField, validateContactForm, type ContactField, type ContactFormErrors, type ContactFormValues } from "@/lib/contactValidation";
 import { cycleRadioStationIndex, radioStations } from "@/lib/radio";
-import { BACKGROUND_MUSIC_VOLUME, attemptAudioPlayback, attemptBackgroundAutoplay, shouldAutoStartBackgroundAudio, shouldStartBlockedAutoplayOnUserInteraction } from "@/lib/audio";
+import { BACKGROUND_MUSIC_VOLUME, attemptAudioPlayback, attemptBackgroundAutoplay, resumeBackgroundAudio, shouldAutoStartBackgroundAudio, shouldResumeBackgroundAudio, shouldStartBlockedAutoplayOnUserInteraction } from "@/lib/audio";
 import { shouldRenderHeroMotion } from "@/lib/heroMotion";
 import { getMobileMotionDurations } from "@/lib/mobileMotion";
 import { canLaunchGithubRepository, PROJECT_LAUNCH_DURATION_MS } from "@/lib/projectLaunch";
@@ -83,6 +83,7 @@ export default function Home() {
   const [sceneVideoFailures, setSceneVideoFailures] = useState<Partial<Record<ScreenId, boolean>>>({});
   const backgroundAudioRef = useRef<HTMLAudioElement>(null);
   const backgroundAudioStartAttemptedRef = useRef(false);
+  const resumeBackgroundAfterVisibilityRef = useRef(false);
   const reduceMotion = useReducedMotion();
   const isMobile = useIsMobile();
   const pointerX = useMotionValue(0);
@@ -158,12 +159,38 @@ export default function Home() {
     void attemptAudioPlayback(backgroundAudioRef.current, BACKGROUND_MUSIC_VOLUME);
   }, [radioStationIndex]);
 
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      const audio = backgroundAudioRef.current;
+      if (document.hidden) {
+        resumeBackgroundAfterVisibilityRef.current = Boolean(audio && !audio.paused && !isMuted && !hasUserMuted);
+        audio?.pause();
+        return;
+      }
+
+      if (shouldResumeBackgroundAudio({
+        isDocumentHidden: document.hidden,
+        hasUserMuted,
+        wasPlayingWhenHidden: resumeBackgroundAfterVisibilityRef.current,
+      })) {
+        resumeBackgroundAfterVisibilityRef.current = false;
+        void resumeBackgroundAudio(audio, BACKGROUND_MUSIC_VOLUME).then((didResume) => {
+          if (!didResume) setIsMuted(true);
+        });
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
+  }, [hasUserMuted, isMuted]);
+
   const toggleAudio = () => {
     if (isMuted) {
       enableAudio();
       return;
     }
     backgroundAudioRef.current?.pause();
+    resumeBackgroundAfterVisibilityRef.current = false;
     setIsMuted(true);
     setHasUserMuted(true);
   };
@@ -649,16 +676,29 @@ function AboutScreen() {
 }
 
 function SkillsScreen() {
+  const [selectedSkill, setSelectedSkill] = useState(0);
+  const skillSegments = [10, 10, 10, 10, 9];
   return (
     <div className="detail-card skills-card">
       <span className="section-label">02 / STAT SHEET</span>
       <h2>SKILLS <em>UNLOCKED</em></h2>
       <div className="skills-list">
         {portfolioData.skills.map((skill, index) => (
-          <div className="skill-row" key={skill.label}>
-            <div className="skill-topline"><span>0{index + 1}. {skill.label}</span><strong>VERIFIED</strong></div>
-            <span className="skill-meter"><i style={{ backgroundColor: skill.color }} /></span>
-          </div>
+          <button
+            type="button"
+            className={`skill-card ${selectedSkill === index ? "is-selected" : ""}`}
+            key={skill.label}
+            onClick={() => setSelectedSkill(index)}
+            style={{ "--skill-accent": skill.color } as CSSProperties}
+            aria-pressed={selectedSkill === index}
+          >
+            <span className="skill-card-topline"><span className="skill-number">0{index + 1}</span><span className="skill-category">{skill.category}</span><span className="skill-status">[ {skill.status} ]</span></span>
+            <span className="skill-name">{skill.label}</span>
+            <span className="skill-bar" aria-label={`${skill.label} RPG stat meter`}>
+              {Array.from({ length: 10 }).map((_, segment) => <i key={segment} className={segment < skillSegments[index] ? "is-filled" : ""} />)}
+            </span>
+            <span className="skill-level">STAT METER</span>
+          </button>
         ))}
       </div>
         <p className="micro-copy">BUILD PRACTICAL SYSTEMS. AUTOMATE THE REPETITIVE WORK.</p>

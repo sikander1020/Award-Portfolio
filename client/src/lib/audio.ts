@@ -43,6 +43,19 @@ export async function attemptBackgroundAutoplay(audio: AutoplayableAudio | null,
   }
 }
 
+/** Resumes an already-started background track without resetting its playhead. */
+export async function resumeBackgroundAudio(audio: AutoplayableAudio | null, volume: number) {
+  if (!audio) return false;
+  try {
+    audio.volume = volume;
+    audio.muted = false;
+    await audio.play();
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export type UiAudioSource = "button" | "ambient" | "typing";
 
 /** Interaction SFX stay disabled so a click can never create a duplicated or delayed cue. */
@@ -70,4 +83,16 @@ export function shouldAutoStartBackgroundAudio({
 /** Allows only background music to recover after the first deliberate interaction. */
 export function shouldStartBlockedAutoplayOnUserInteraction({ hasUserMuted, isPaused }: { hasUserMuted: boolean; isPaused: boolean }) {
   return !hasUserMuted && isPaused;
+}
+
+export function shouldResumeBackgroundAudio({
+  isDocumentHidden,
+  hasUserMuted,
+  wasPlayingWhenHidden,
+}: {
+  isDocumentHidden: boolean;
+  hasUserMuted: boolean;
+  wasPlayingWhenHidden: boolean;
+}) {
+  return !isDocumentHidden && !hasUserMuted && wasPlayingWhenHidden;
 }
