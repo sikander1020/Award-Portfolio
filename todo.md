@@ -493,3 +493,6 @@
 - [x] Replace the short CRT glitch with a compact GTA-style mission-loading card, sweep, and progress handoff before every explicit section selection.
 - [x] Preserve instant keyboard navigation and reduced-motion behavior while adding the cinematic transition for deliberate pointer menu selections.
 - [x] Add tests and verify section mission-loading flow plus Skills video visibility on mobile and desktop before publishing.
+- [x] Extend deliberate section mission-loading transitions to approximately 1.5 seconds while retaining reduced-motion and keyboard bypasses.
+- [x] Define and display a unique GTA-style mission title for every portfolio section, including Operation: Skills and Project Heist.
+- [x] Add regression coverage and verify mission titles plus timing across desktop and mobile before publishing.

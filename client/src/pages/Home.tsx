@@ -43,7 +43,7 @@ import { BACKGROUND_MUSIC_VOLUME, attemptAudioPlayback, attemptBackgroundAutopla
 import { shouldRenderHeroMotion } from "@/lib/heroMotion";
 import { getMobileMotionDurations } from "@/lib/mobileMotion";
 import { canLaunchGithubRepository, PROJECT_LAUNCH_DURATION_MS } from "@/lib/projectLaunch";
-import { MENU_SECTION_LOADING_DURATION_MS, MENU_SECTION_REVEAL_DELAY_MS, shouldRunMenuTransition } from "@/lib/sectionTransition";
+import { getSectionMissionTitle, MENU_SECTION_LOADING_DURATION_MS, MENU_SECTION_REVEAL_DELAY_MS, shouldRunMenuTransition } from "@/lib/sectionTransition";
 import { useIsMobile } from "@/hooks/useMobile";
 
 const screenIndex = Object.fromEntries(portfolioData.screens.map((screen, index) => [screen.id, index]));
@@ -765,14 +765,14 @@ function ProjectLaunchOverlay({ project }: { project: (typeof portfolioData.proj
   );
 }
 
-function SectionMissionLoadingOverlay({ screen }: { screen: { navLabel: string; subtitle: string } }) {
+function SectionMissionLoadingOverlay({ screen }: { screen: { id: ScreenId; navLabel: string; subtitle: string } }) {
   const reduceMotion = useReducedMotion();
   return (
     <motion.section className="section-mission-overlay" initial={reduceMotion ? false : { opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: reduceMotion ? 0 : 0.12, ease: cinematicEase }} role="status" aria-live="polite">
       <div className="section-mission-grid" aria-hidden="true" />
       <motion.div className="section-mission-card" initial={reduceMotion ? false : { opacity: 0, y: 14, scale: .98 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: reduceMotion ? 0 : 0.2, ease: cinematicEase }}>
         <span>VICE SIGNAL / MISSION SELECT</span>
-        <h2>LOADING<br /><em>{screen.navLabel}</em></h2>
+        <h2>LOADING<br /><em>{getSectionMissionTitle(screen.id)}</em></h2>
         <p>PREPARING {screen.subtitle}</p>
         <div className="section-mission-track"><i /></div>
         <small>SYNCING CITY GRID • PLEASE STAND BY</small>
