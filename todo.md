@@ -575,3 +575,4 @@
 - [x] Audit the 1.5-second section-transition cue lifecycle, audible level, source mapping, and background mix during Skills, Projects, and other pointer navigations.
 - [x] Make dedicated Mission Select cues reliably audible for every section while preserving manual MUSIC OFF, hidden-tab pause, and multi-track radio playback.
 - [x] Add regression coverage and validate all transition audio paths, desktop/mobile controls, tests, and production build before publishing.
+- [x] Route every Mission Select cue through its direct release asset path so Vercel cannot serve the portfolio HTML in place of audio.
