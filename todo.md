@@ -474,4 +474,8 @@
 - [x] Add targeted test coverage and browser verification for UI cue, mute, and background music behavior.
 - [x] Trace and eliminate any duplicate or delayed UI audio emitted by Projects and other supported portfolio actions.
 - [x] Add regression coverage proving that one supported user action can trigger no more than one UI cue.
-- [ ] Verify the corrected single-cue behavior on the live Vercel project interactions.
+- [x] Verify the corrected single-cue behavior on the live Vercel project interactions.
+- [x] Replace the mobile top navigation with an accessible collapsible hamburger menu under 768px while keeping desktop navigation unchanged.
+- [x] Apply the requested dark blurred mobile card surface to STAT SHEET, CHARACTER FILE, MISSION SELECT, and related content panels.
+- [x] Stack mobile stage elements with a collision-free vertical flow and responsive padding without hiding the approved scene composition.
+- [x] Add targeted layout tests and verify mobile plus desktop renderings before publishing.

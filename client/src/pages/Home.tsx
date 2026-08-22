@@ -21,6 +21,7 @@ import {
   Linkedin,
   Mail,
   MapPin,
+  Menu,
   MoveUpRight,
   Radio,
   Send,
@@ -31,6 +32,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { Spinner } from "@/components/ui/spinner";
+import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { portfolioData, type ScreenId } from "@/data/portfolioData";
 import { portableMedia } from "@/data/portableMedia";
 import { CONTACT_SUCCESS_VISIBLE_MS, getContactSuccessCopy } from "@/lib/contactFeedback";
@@ -66,6 +68,7 @@ export default function Home() {
     return requestedScreen && requestedScreen in screenIndex ? (requestedScreen as ScreenId) : "start";
   });
   const [selectedProject, setSelectedProject] = useState(0);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [launchingProject, setLaunchingProject] = useState<(typeof portfolioData.projects)[number] | null>(null);
   const [isBooting, setIsBooting] = useState(
     () => new URLSearchParams(window.location.search).get("preview") !== "scene",
@@ -174,6 +177,7 @@ export default function Home() {
   const switchScreen = (id: ScreenId) => {
     if (id === activeId) return;
     setActiveId(id);
+    setMobileNavOpen(false);
   };
 
   const handleMissionPassed = (projectTitle: string) => {
@@ -371,9 +375,47 @@ export default function Home() {
 
       <section className="game-shell">
         <aside className="interface-rail" aria-label="Portfolio navigation">
-          <div className="wordmark" aria-label={`${portfolioData.profile.fullName} Builds`}>
-            <span>{portfolioData.profile.shortName}</span>
-            <strong>BUILDS</strong>
+          <div className="mobile-rail-header">
+            <div className="wordmark" aria-label={`${portfolioData.profile.fullName} Builds`}>
+              <span>{portfolioData.profile.shortName}</span>
+              <strong>BUILDS</strong>
+            </div>
+            <Sheet open={mobileNavOpen} onOpenChange={setMobileNavOpen}>
+              <button
+                type="button"
+                className="mobile-nav-trigger"
+                onClick={() => setMobileNavOpen(true)}
+                aria-label="Open portfolio navigation"
+                aria-expanded={mobileNavOpen}
+              >
+                <Menu size={18} />
+                <span>MENU</span>
+              </button>
+              <SheetContent side="left" className="mobile-nav-sheet">
+                <SheetTitle className="mobile-nav-title">MISSION SELECT</SheetTitle>
+                <nav className="mobile-nav-list" aria-label="Mobile portfolio sections">
+                  {portfolioData.screens.map((screen, index) => {
+                    const active = activeId === screen.id;
+                    return (
+                      <button
+                        key={screen.id}
+                        type="button"
+                        className={`mobile-nav-item ${active ? "is-active" : ""}`}
+                        onClick={() => switchScreen(screen.id)}
+                        aria-current={active ? "page" : undefined}
+                      >
+                        <span>0{index + 1}</span>
+                        <strong>{screen.navLabel}</strong>
+                        <ChevronRight size={16} />
+                      </button>
+                    );
+                  })}
+                  <button type="button" className="mobile-nav-item mobile-nav-exit" onClick={() => { setMobileNavOpen(false); toast("SESSION PAUSED — your progress is safe."); }}>
+                    <span>08</span><strong>EXIT GAME</strong><MoveUpRight size={15} />
+                  </button>
+                </nav>
+              </SheetContent>
+            </Sheet>
           </div>
 
           <div className="rail-meta">
