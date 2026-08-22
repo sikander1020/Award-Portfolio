@@ -63,11 +63,10 @@ export const portableMedia = {
     bootReady: releaseAsset("vice-boot-ready_f783e2aa.mp3"),
     
     missionPassed: releaseAsset("vice-mission-passed_fb89ebaf.mp3"),
-    
+    missionTuning: releaseAsset("mission-radio-tuning.mp3"),
   },
   
 } as const;
-
 
 
 

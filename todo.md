@@ -496,3 +496,7 @@
 - [x] Extend deliberate section mission-loading transitions to approximately 1.5 seconds while retaining reduced-motion and keyboard bypasses.
 - [x] Define and display a unique GTA-style mission title for every portfolio section, including Operation: Skills and Project Heist.
 - [x] Add regression coverage and verify mission titles plus timing across desktop and mobile before publishing.
+- [x] Create an original subtle radio-tuning/loading cue for the 1.5-second Mission Select sequence.
+- [x] Play the cue only during deliberate section mission loading and stop it cleanly once the selected section opens.
+- [x] Respect manual MUSIC OFF, hidden-tab behavior, and the existing no-interaction-SFX policy outside mission loading.
+- [x] Add focused tests and verify the mission cue timing and mute behavior before publishing.

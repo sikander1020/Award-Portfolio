@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { BACKGROUND_MUSIC_VOLUME, UI_CUE_VOLUME, attemptAudioPlayback, attemptBackgroundAutoplay, resumeBackgroundAudio, shouldAutoStartBackgroundAudio, shouldPlayTypingCue, shouldPlayUiAudio, shouldResumeBackgroundAudio, shouldStartBlockedAutoplayOnUserInteraction } from "./audio";
+import { BACKGROUND_MUSIC_VOLUME, MISSION_LOADING_CUE_VOLUME, UI_CUE_VOLUME, attemptAudioPlayback, attemptBackgroundAutoplay, resumeBackgroundAudio, shouldAutoStartBackgroundAudio, shouldPlayMissionLoadingCue, shouldPlayTypingCue, shouldPlayUiAudio, shouldResumeBackgroundAudio, shouldStartBlockedAutoplayOnUserInteraction } from "./audio";
 
 describe("attemptAudioPlayback", () => {
   it("starts a supplied audio element from the beginning at the requested volume", async () => {
@@ -53,6 +53,14 @@ describe("attemptAudioPlayback", () => {
   it("keeps interface and background audio below the previously overpowering cue level", () => {
     expect(UI_CUE_VOLUME).toBeLessThan(0.3);
     expect(BACKGROUND_MUSIC_VOLUME).toBeLessThan(0.3);
+    expect(MISSION_LOADING_CUE_VOLUME).toBeLessThan(UI_CUE_VOLUME);
+  });
+
+  it("plays the mission loading cue only for an audible visible session", () => {
+    expect(shouldPlayMissionLoadingCue({ isMuted: false, hasUserMuted: false, isDocumentHidden: false })).toBe(true);
+    expect(shouldPlayMissionLoadingCue({ isMuted: true, hasUserMuted: false, isDocumentHidden: false })).toBe(false);
+    expect(shouldPlayMissionLoadingCue({ isMuted: false, hasUserMuted: true, isDocumentHidden: false })).toBe(false);
+    expect(shouldPlayMissionLoadingCue({ isMuted: false, hasUserMuted: false, isDocumentHidden: true })).toBe(false);
   });
 
   it("auto-starts music only after loading completes and never overrides a manual mute", () => {
