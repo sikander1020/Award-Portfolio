@@ -104,7 +104,8 @@ export default function Home() {
   const contentY = useTransform(smoothY, (value) => value * 0.12);
   const localTime = useLiveClock();
   const time = localTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-  const timeMode = getLocalTimeMode(localTime.getHours());
+  const previewTimeMode = import.meta.env.DEV ? new URLSearchParams(window.location.search).get("timeMode") : null;
+  const timeMode = previewTimeMode === "night" ? getLocalTimeMode(23) : getLocalTimeMode(localTime.getHours());
   const activeScreen = useMemo(
     () => portfolioData.screens.find((screen) => screen.id === activeId) ?? portfolioData.screens[0],
     [activeId],

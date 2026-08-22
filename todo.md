@@ -521,3 +521,9 @@
 - [x] Implement GPU-friendly night-light shimmer with pointer events disabled and no content overlap.
 - [x] Respect reduced-motion preferences and preserve mobile readability plus approved scene framing.
 - [x] Add focused coverage and validate desktop/mobile night-mode rendering before publishing.
+
+## Mobile night-light visibility correction
+
+- [x] Inspect mobile night-mode layer placement, opacity, and scale against the portrait and content flow.
+- [x] Strengthen and reposition the mobile city-light clusters so the night effect is clearly visible without obscuring copy.
+- [x] Validate the corrected mobile night mode, reduced-motion fallback, tests, and production build before publishing.
