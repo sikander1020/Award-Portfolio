@@ -347,36 +347,29 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--vice-pink); out
   .mission-briefing-overlay { padding: 18px; }.mission-briefing-card { width: min(100%, 354px); padding: 26px 19px 20px; }.mission-briefing-kicker { max-width: 250px; font-size: 9px; }.mission-briefing-card h2 { margin-top: 12px; font-size: clamp(48px, 15vw, 64px); }.mission-briefing-card > p { font-size: 13px; }.mission-briefing-actions { display: grid; grid-template-columns: 1fr; }.mission-briefing-actions button { justify-content: center; width: 100%; }
 }
 
-/* Final mobile composition: keep navigation and content in normal document flow.
-   This intentionally overrides the previous competing compact/mobile HUD rules. */
+/* Final mobile composition: retain the cinematic key art while giving navigation
+   and content their own flow space. Do not flatten the scene into opaque cards. */
 @media (max-width: 720px) {
   .top-hud { position: relative; z-index: 12; }
   .game-shell { display: block; min-height: auto; }
-  .interface-rail { position: relative; z-index: 9; padding: 17px 16px 14px; background: linear-gradient(180deg, rgba(4,4,7,.97), rgba(4,4,7,.88)); border-bottom: 1px solid rgba(255,255,255,.12); }
-  .wordmark { font-size: 42px; }
-  .game-nav { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; margin-top: 15px; padding: 0; overflow: visible; }
-  .nav-item { min-width: 0; min-height: 38px; justify-content: center; padding: 7px 5px; font-size: 11px; letter-spacing: .045em; white-space: normal; }
-  .nav-label { overflow: visible; text-overflow: clip; white-space: normal; }
-  .content-stage { z-index: 6; min-height: 0; padding: 24px 16px 58px; background: linear-gradient(180deg, rgba(3,4,8,.22), rgba(3,4,8,.72) 25%, rgba(3,4,8,.90) 100%); }
+  .interface-rail { position: relative; z-index: 9; padding: 13px 18px 8px; background: linear-gradient(180deg, rgba(4,4,7,.82), rgba(4,4,7,.18)); border-bottom: 0; }
+  .wordmark { font-size: 37px; }
+  .game-nav { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 3px 10px; margin-top: 10px; padding: 0; overflow: visible; }
+  .nav-item { min-width: 0; min-height: 34px; justify-content: center; padding: 7px 0; font-size: 10px; letter-spacing: .03em; white-space: nowrap; }
+  .nav-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .content-stage { z-index: 6; min-height: calc(100svh - 175px); padding: 55px 18px 58px; background: transparent; }
   .chapter-head { position: relative; top: auto; right: auto; left: auto; margin: 0 0 16px; padding: 0 0 10px; border-bottom: 1px solid rgba(255,255,255,.14); }
   .screen-pane { position: relative; z-index: 2; }
-  .scene-portrait-layer { display: none; }
-  .scene-motion-video { opacity: .48; }
-  .scene-dust { opacity: .2; }
-  .start-screen, .detail-card, .contact-card, .projects-layout { width: 100%; box-sizing: border-box; background: linear-gradient(145deg, rgba(7,8,13,.94), rgba(9,9,14,.82)); backdrop-filter: blur(12px); box-shadow: 0 18px 45px rgba(0,0,0,.32); }
-  .start-screen { padding: 28px 20px 22px; border: 1px solid rgba(255,255,255,.18); }
-  .start-screen h1, .detail-card h2, .project-detail h2, .contact-card h2 { font-size: clamp(50px, 15vw, 72px); }
-  .large-copy, .start-screen p, .project-detail p { font-size: 15px; line-height: 1.58; }
-  .detail-card, .contact-card { padding: 24px 19px; }
-  .projects-layout { display: grid; grid-template-columns: 1fr; gap: 0; }
-  .project-select { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; padding: 7px; border: 0; border-bottom: 1px solid rgba(255,255,255,.16); background: rgba(255,255,255,.025); }
-  .project-tab { min-width: 0; min-height: 72px; border: 1px solid rgba(255,255,255,.13); border-bottom: 1px solid rgba(255,255,255,.13); padding: 9px 10px; background: rgba(3,4,8,.38); }
-  .project-tab.is-selected { border-color: rgba(255,44,138,.75); background: rgba(255,44,138,.10); }
-  .project-tab strong { font-size: 13px; line-height: 1.08; }
-  .project-detail { padding: 25px 19px 22px; }
-  .project-actions { display: grid; grid-template-columns: 1fr; gap: 14px; margin-top: 25px; }
-  .text-action { justify-content: space-between; padding-bottom: 8px; }
-  .intel-grid { margin-top: 22px; }
-  .intel-grid div { min-width: 0; }
-  .intel-grid dd { font-size: 13px; }
+  .scene-portrait-layer { display: block; opacity: .94; }
+  .scene-motion-video { opacity: 1; }
+  .scene-dust { opacity: .46; }
+  .start-screen { padding: 50px 0 0; }
+  .detail-card, .contact-card { background: linear-gradient(135deg, rgba(6,7,11,.81), rgba(8,8,12,.52)); box-shadow: 18px 25px 60px rgba(0,0,0,.2); backdrop-filter: blur(7px); }
+  .projects-layout { gap: 12px; }
+  .project-select { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; padding: 0; border: 1px solid rgba(255,255,255,.14); background: rgba(3,4,8,.42); }
+  .project-tab { min-height: 62px; border: 0; border-bottom: 1px solid rgba(255,255,255,.10); padding: 8px 7px; background: transparent; }
+  .project-tab.is-selected { border-bottom-color: var(--vice-pink); background: rgba(255,255,255,.08); }
+  .project-tab strong { font-size: 11px; line-height: 1.08; }
+  .project-detail { padding: 22px 19px; }
+  .project-actions { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 32px; }
 }
