@@ -468,3 +468,7 @@
 - [ ] Select and configure a free hosting architecture that preserves the interactive portfolio and essential contact functionality.
 - [ ] Diagnose and restore the currently broken public portfolio deployment before further hosting migration changes.
 - [x] Update frontend media URLs and contact-form API wiring for an always-on Vercel deployment without Manus-only routes.
+- [x] Restrict interface click cues to deliberate supported controls and prevent any automatic or duplicate playback.
+- [x] Lower the UI click-cue volume while preserving a clear but subtle interaction acknowledgement.
+- [x] Restore background music startup with a first-interaction fallback that preserves an explicit manual Music Off preference.
+- [x] Add targeted test coverage and browser verification for UI cue, mute, and background music behavior.

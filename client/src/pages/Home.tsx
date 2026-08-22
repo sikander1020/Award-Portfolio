@@ -37,7 +37,7 @@ import { CONTACT_SUCCESS_VISIBLE_MS, getContactSuccessCopy } from "@/lib/contact
 import { submitContactTransmission } from "@/lib/contactDelivery";
 import { shouldEscalateWantedLevel, validateContactField, validateContactForm, type ContactField, type ContactFormErrors, type ContactFormValues } from "@/lib/contactValidation";
 import { cycleRadioStationIndex, radioStations } from "@/lib/radio";
-import { attemptAudioPlayback, attemptBackgroundAutoplay, shouldAutoStartBackgroundAudio, shouldPlayTypingCue, shouldPlayUiAudio, shouldStartBlockedAutoplayOnUserInteraction } from "@/lib/audio";
+import { BACKGROUND_MUSIC_VOLUME, UI_CUE_VOLUME, attemptAudioPlayback, attemptBackgroundAutoplay, shouldAutoStartBackgroundAudio, shouldPlayTypingCue, shouldPlayUiAudio, shouldStartBlockedAutoplayOnUserInteraction } from "@/lib/audio";
 import { shouldRenderHeroMotion } from "@/lib/heroMotion";
 import { getMobileMotionDurations } from "@/lib/mobileMotion";
 import { canLaunchGithubRepository, PROJECT_LAUNCH_DURATION_MS } from "@/lib/projectLaunch";
@@ -123,7 +123,7 @@ export default function Home() {
     backgroundAudioStartAttemptedRef.current = true;
     setHasUserMuted(false);
     setIsMuted(false);
-    void attemptAudioPlayback(backgroundAudioRef.current, 0.24).then((didPlay) => {
+    void attemptAudioPlayback(backgroundAudioRef.current, BACKGROUND_MUSIC_VOLUME).then((didPlay) => {
       if (!didPlay) setIsMuted(true);
     });
   };
@@ -136,8 +136,9 @@ export default function Home() {
     })) return;
 
     backgroundAudioStartAttemptedRef.current = true;
-    void attemptBackgroundAutoplay(backgroundAudioRef.current, 0.24).then((didPlay) => {
+    void attemptBackgroundAutoplay(backgroundAudioRef.current, BACKGROUND_MUSIC_VOLUME).then((didPlay) => {
       if (didPlay) setIsMuted(false);
+      else backgroundAudioStartAttemptedRef.current = false;
     });
   };
 
@@ -146,9 +147,8 @@ export default function Home() {
     if (!backgroundAudio || !shouldStartBlockedAutoplayOnUserInteraction({ hasUserMuted, isPaused: backgroundAudio.paused })) return;
 
     backgroundAudioStartAttemptedRef.current = true;
-    backgroundAudio.muted = false;
     setIsMuted(false);
-    void attemptAudioPlayback(backgroundAudio, 0.24).then((didPlay) => setIsMuted(!didPlay));
+    void attemptAudioPlayback(backgroundAudio, BACKGROUND_MUSIC_VOLUME).then((didPlay) => setIsMuted(!didPlay));
   };
 
   useEffect(() => {
@@ -157,16 +157,12 @@ export default function Home() {
 
   useEffect(() => {
     if (isBooting || isMuted) return;
-    void attemptAudioPlayback(backgroundAudioRef.current, 0.24);
+    void attemptAudioPlayback(backgroundAudioRef.current, BACKGROUND_MUSIC_VOLUME);
   }, [radioStationIndex]);
 
-  const playCue = (audioRef: React.RefObject<HTMLAudioElement | null>, volume = 0.55) => {
+  const playCue = (audioRef: React.RefObject<HTMLAudioElement | null>, volume = UI_CUE_VOLUME) => {
     if (!shouldPlayUiAudio(isMuted)) return;
     void attemptAudioPlayback(audioRef.current, volume);
-  };
-
-  const playCueNow = (audioRef: React.RefObject<HTMLAudioElement | null>) => {
-    void attemptAudioPlayback(audioRef.current, 0.55);
   };
 
   const toggleAudio = () => {
@@ -181,14 +177,14 @@ export default function Home() {
 
   const changeRadioStation = (direction: -1 | 1) => {
     setRadioStationIndex((current) => cycleRadioStationIndex(current, direction));
-    playCue(navAudioRef, 0.28);
+    playCue(navAudioRef);
   };
 
   const registerWantedLevelError = () => setWantedLevel((current) => Math.min(5, current + 1));
 
-  const switchScreen = (id: ScreenId) => {
+  const switchScreen = (id: ScreenId, shouldPlayNavigationCue = false) => {
     if (id === activeId) return;
-    playCue(navAudioRef);
+    if (shouldPlayNavigationCue) playCue(navAudioRef);
     setActiveId(id);
   };
 
@@ -206,7 +202,7 @@ export default function Home() {
     }
 
     setLaunchingProject(project);
-    playCue(bootAudioRef, 0.28);
+    playCue(bootAudioRef);
     window.requestAnimationFrame(() => {
       window.setTimeout(() => {
         if (project.href) window.location.assign(project.href);
@@ -295,7 +291,7 @@ export default function Home() {
       <audio ref={missionAudioRef} src={portableMedia.audio.missionPassed} preload="auto" />
       <audio ref={typingAudioRef} src={portableMedia.audio.navigation} preload="auto" />
       <AnimatePresence>
-        {isBooting && <BootIntro heroArt={heroArt} onComplete={() => setIsBooting(false)} onEnableAudio={() => { enableAudio(); window.setTimeout(() => playCueNow(bootAudioRef), 70); }} />}
+        {isBooting && <BootIntro heroArt={heroArt} onComplete={() => setIsBooting(false)} onEnableAudio={() => { enableAudio(); window.setTimeout(() => playCue(bootAudioRef), 70); }} />}
       </AnimatePresence>
       {!isBooting && !reduceMotion && <div className="scene-video-warmup" aria-hidden="true">
         {sceneVideoWarmupSources.map((src) => <video key={src} src={src} preload="auto" muted playsInline />)}
@@ -419,7 +415,7 @@ export default function Home() {
                     key={screen.id}
                     type="button"
                     className={`nav-item ${active ? "is-active" : ""}`}
-                    onClick={() => switchScreen(screen.id)}
+                    onClick={() => switchScreen(screen.id, true)}
                     aria-pressed={active}
                     whileHover={reduceMotion ? undefined : { x: 4 }}
                     whileTap={reduceMotion ? undefined : { scale: 0.98 }}
@@ -474,7 +470,7 @@ export default function Home() {
               exit={reduceMotion ? { opacity: 0 } : isMobile ? { opacity: 0, x: -12, y: -2 } : { opacity: 0, x: -28, y: -6, filter: "blur(5px)" }}
               transition={panelTransition}
             >
-              {activeId === "start" && <StartScreen onEnter={() => switchScreen("about")} />}
+              {activeId === "start" && <StartScreen onEnter={() => switchScreen("about", true)} />}
               {activeId === "about" && <AboutScreen />}
               {activeId === "skills" && <SkillsScreen />}
               {activeId === "projects" && <ProjectsScreen selectedProject={selectedProject} onSelectProject={setSelectedProject} onMissionPassed={handleMissionPassed} onLaunchRepository={launchGithubRepository} />}
@@ -499,7 +495,7 @@ export default function Home() {
         <nav className="bottom-map radar-menu" aria-label="Radar section navigation">
           <div className="map-grid" />
           <MapPin size={14} className="map-pin" />
-          {portfolioData.screens.map((screen, index) => <button key={screen.id} type="button" className={`radar-node ${activeId === screen.id ? "is-active" : ""}`} style={{ "--radar-x": `${radarPositions[index][0]}%`, "--radar-y": `${radarPositions[index][1]}%` } as CSSProperties} onClick={() => switchScreen(screen.id)} aria-label={`Navigate to ${screen.navLabel}`} aria-current={activeId === screen.id ? "page" : undefined}><span>{String(index + 1).padStart(2, "0")}</span></button>)}
+          {portfolioData.screens.map((screen, index) => <button key={screen.id} type="button" className={`radar-node ${activeId === screen.id ? "is-active" : ""}`} style={{ "--radar-x": `${radarPositions[index][0]}%`, "--radar-y": `${radarPositions[index][1]}%` } as CSSProperties} onClick={() => switchScreen(screen.id, true)} aria-label={`Navigate to ${screen.navLabel}`} aria-current={activeId === screen.id ? "page" : undefined}><span>{String(index + 1).padStart(2, "0")}</span></button>)}
           <span className="map-label">{activeScreen.navLabel.toUpperCase()}</span>
         </nav>
       </section>
