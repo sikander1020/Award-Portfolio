@@ -44,7 +44,7 @@ import { shouldRenderHeroMotion } from "@/lib/heroMotion";
 import { getMobileMotionDurations } from "@/lib/mobileMotion";
 import { canLaunchGithubRepository, PROJECT_LAUNCH_DURATION_MS } from "@/lib/projectLaunch";
 import { getSectionMissionTitle, MENU_SECTION_LOADING_DURATION_MS, MENU_SECTION_REVEAL_DELAY_MS, shouldRunMenuTransition } from "@/lib/sectionTransition";
-import { getLocalTimeMode, shouldApplyLocalTimeRadioPreset, shouldRenderNightCityLights } from "@/lib/timeMode";
+import { getEffectiveTimeMode, getLocalTimeMode, shouldApplyLocalTimeRadioPreset, shouldRenderNightCityLights } from "@/lib/timeMode";
 import { useIsMobile } from "@/hooks/useMobile";
 
 const screenIndex = Object.fromEntries(portfolioData.screens.map((screen, index) => [screen.id, index]));
@@ -71,6 +71,7 @@ export default function Home() {
   });
   const [selectedProject, setSelectedProject] = useState(0);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [mobileNightPreview, setMobileNightPreview] = useState(false);
   const [launchingProject, setLaunchingProject] = useState<(typeof portfolioData.projects)[number] | null>(null);
   const [isBooting, setIsBooting] = useState(
     () => new URLSearchParams(window.location.search).get("preview") !== "scene",
@@ -105,7 +106,7 @@ export default function Home() {
   const localTime = useLiveClock();
   const time = localTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   const previewTimeMode = import.meta.env.DEV ? new URLSearchParams(window.location.search).get("timeMode") : null;
-  const timeMode = previewTimeMode === "night" ? getLocalTimeMode(23) : getLocalTimeMode(localTime.getHours());
+  const timeMode = getEffectiveTimeMode(localTime.getHours(), previewTimeMode === "night" || (isMobile && mobileNightPreview));
   const activeScreen = useMemo(
     () => portfolioData.screens.find((screen) => screen.id === activeId) ?? portfolioData.screens[0],
     [activeId],
@@ -415,6 +416,15 @@ export default function Home() {
         <i className="night-city-lights-c" />
         <i className="night-city-lights-d" />
       </div>}
+      {isMobile && <button
+        type="button"
+        className={`mobile-night-fx-toggle ${timeMode.id === "night" ? "is-active" : ""}`}
+        onClick={() => setMobileNightPreview((current) => !current)}
+        aria-pressed={mobileNightPreview}
+        aria-label={mobileNightPreview ? "Return to the local-time visual mode" : "Preview the night atmosphere"}
+      >
+        <span>{mobileNightPreview ? "NIGHT FX ON" : timeMode.id === "night" ? "NIGHT FX LIVE" : "PREVIEW NIGHT FX"}</span>
+      </button>}
       <AnimatePresence initial={false} mode="sync">
         <motion.div
           key={`wipe-${activeScreen.id}`}

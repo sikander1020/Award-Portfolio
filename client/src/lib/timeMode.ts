@@ -21,6 +21,11 @@ export function getLocalTimeMode(hour: number): LocalTimeMode {
   return localTimeModes.night;
 }
 
+/** A mobile visitor may temporarily preview the night atmosphere without changing the actual local-time clock. */
+export function getEffectiveTimeMode(hour: number, forceNightPreview = false): LocalTimeMode {
+  return getLocalTimeMode(forceNightPreview ? 23 : hour);
+}
+
 /** Time-based station changes must never override explicit visitor control. */
 export function shouldApplyLocalTimeRadioPreset({
   hasUserMuted,

@@ -540,3 +540,9 @@
 - [x] Implement GPU-friendly animated reflections behind content with responsive desktop and compact-mobile placement.
 - [x] Preserve reduced-motion, touch, portrait, and copy readability behavior while adding the rain atmosphere.
 - [x] Validate night rendering on desktop and compact mobile viewports, tests, and production build before publishing.
+
+## Mobile night-atmosphere visibility reliability
+
+- [x] Identify whether local-time activation, mobile motion preferences, or effect placement prevents night atmosphere rendering on real devices.
+- [x] Make night atmosphere effects reliably discoverable on mobile while preserving explicit user preference and copy readability.
+- [x] Validate the corrected behavior through mobile viewport and user-accessible preview paths before publishing.
