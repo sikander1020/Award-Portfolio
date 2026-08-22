@@ -88,6 +88,16 @@ export function shouldPlayUiAudio(isMuted: boolean, source: UiAudioSource = "but
 
 
 
+/** Compatibility safeguard: typing never emits the navigation cue. */
+
+export function shouldPlayTypingCue({ isMuted }: { isMuted: boolean; now: number; lastCueAt: number; cooldownMs?: number }) {
+  
+  return shouldPlayUiAudio(isMuted, "typing");
+  
+}
+
+
+
 export function shouldAutoStartBackgroundAudio({
   
   isBooting,
@@ -109,6 +119,20 @@ export function shouldAutoStartBackgroundAudio({
   return !isBooting && !hasUserMuted && !hasAlreadyStarted;
   
 }
+
+
+
+/** Ambient page taps do not resume audio; use the explicit MUSIC control instead. */
+
+export function shouldStartBlockedAutoplayOnUserInteraction({ hasUserMuted, isPaused }: { hasUserMuted: boolean; isPaused: boolean }) {
+  
+  return !hasUserMuted && isPaused && false;
+  
+}
+
+
+
+
 
 
 
