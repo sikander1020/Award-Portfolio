@@ -546,3 +546,9 @@
 - [x] Identify whether local-time activation, mobile motion preferences, or effect placement prevents night atmosphere rendering on real devices.
 - [x] Make night atmosphere effects reliably discoverable on mobile while preserving explicit user preference and copy readability.
 - [x] Validate the corrected behavior through mobile viewport and user-accessible preview paths before publishing.
+
+## User-requested night-atmosphere removal
+
+- [x] Remove the city-light, rain-reflection, and mobile Night FX preview layers from the portfolio background.
+- [x] Restore the clean original visual stage without affecting approved video, content, navigation, or radio behavior.
+- [x] Validate restored desktop and mobile composition, tests, and production build before publishing.
