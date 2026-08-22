@@ -484,3 +484,8 @@
 - [x] Make the Skills layout a two-column responsive desktop grid and readable stacked mobile cards with neon hover and focus treatment.
 - [x] Pause background music when the portfolio tab is hidden or browser minimized, preserving explicit user mute and intended resume behavior.
 - [x] Add focused tests and verify Skills, Projects, and audio visibility behavior across mobile and desktop before publishing.
+- [x] Reduce the Skills panel opacity and visual footprint so the approved cinematic scene remains visibly present behind the stat cards.
+- [x] Add a 0.2-second CRT scanline, RGB split, and horizontal glitch flash on explicit menu selection before the new section appears.
+- [x] Add staggered section card entrances and resettable Skills segmented-bar fills when the Skills section opens.
+- [x] Animate the active pink menu accent smoothly between selected menu options on desktop and mobile navigation.
+- [x] Add targeted tests and verify transition performance plus Skills background balance across mobile and desktop before publishing.

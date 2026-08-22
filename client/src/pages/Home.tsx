@@ -43,6 +43,7 @@ import { BACKGROUND_MUSIC_VOLUME, attemptAudioPlayback, attemptBackgroundAutopla
 import { shouldRenderHeroMotion } from "@/lib/heroMotion";
 import { getMobileMotionDurations } from "@/lib/mobileMotion";
 import { canLaunchGithubRepository, PROJECT_LAUNCH_DURATION_MS } from "@/lib/projectLaunch";
+import { MENU_GLITCH_DURATION_MS, MENU_GLITCH_REVEAL_DELAY_MS, shouldRunMenuGlitch } from "@/lib/sectionTransition";
 import { useIsMobile } from "@/hooks/useMobile";
 
 const screenIndex = Object.fromEntries(portfolioData.screens.map((screen, index) => [screen.id, index]));
@@ -81,9 +82,11 @@ export default function Home() {
   const [isMissionPreview, setIsMissionPreview] = useState(false);
   const [heroVideoFailed, setHeroVideoFailed] = useState(false);
   const [sceneVideoFailures, setSceneVideoFailures] = useState<Partial<Record<ScreenId, boolean>>>({});
+  const [isMenuGlitching, setIsMenuGlitching] = useState(false);
   const backgroundAudioRef = useRef<HTMLAudioElement>(null);
   const backgroundAudioStartAttemptedRef = useRef(false);
   const resumeBackgroundAfterVisibilityRef = useRef(false);
+  const glitchSequenceRef = useRef(0);
   const reduceMotion = useReducedMotion();
   const isMobile = useIsMobile();
   const pointerX = useMotionValue(0);
@@ -201,10 +204,26 @@ export default function Home() {
 
   const registerWantedLevelError = () => setWantedLevel((current) => Math.min(5, current + 1));
 
-  const switchScreen = (id: ScreenId) => {
+  useEffect(() => () => {
+    glitchSequenceRef.current += 1;
+  }, []);
+
+  const switchScreen = (id: ScreenId, cinematic = true) => {
     if (id === activeId) return;
-    setActiveId(id);
     setMobileNavOpen(false);
+    if (!cinematic || !shouldRunMenuGlitch({ from: activeId, to: id, reduceMotion: Boolean(reduceMotion) })) {
+      setActiveId(id);
+      return;
+    }
+
+    const sequence = ++glitchSequenceRef.current;
+    setIsMenuGlitching(true);
+    window.setTimeout(() => {
+      if (glitchSequenceRef.current === sequence) setActiveId(id);
+    }, MENU_GLITCH_REVEAL_DELAY_MS);
+    window.setTimeout(() => {
+      if (glitchSequenceRef.current === sequence) setIsMenuGlitching(false);
+    }, MENU_GLITCH_DURATION_MS);
   };
 
   const handleMissionPassed = (projectTitle: string) => {
@@ -257,11 +276,11 @@ export default function Home() {
     const currentIndex = screenIndex[activeId];
     if (event.key === "ArrowDown" || event.key === "ArrowRight") {
       event.preventDefault();
-      switchScreen(portfolioData.screens[(currentIndex + 1) % portfolioData.screens.length].id);
+      switchScreen(portfolioData.screens[(currentIndex + 1) % portfolioData.screens.length].id, false);
     }
     if (event.key === "ArrowUp" || event.key === "ArrowLeft") {
       event.preventDefault();
-      switchScreen(portfolioData.screens[(currentIndex - 1 + portfolioData.screens.length) % portfolioData.screens.length].id);
+      switchScreen(portfolioData.screens[(currentIndex - 1 + portfolioData.screens.length) % portfolioData.screens.length].id, false);
     }
   };
 
@@ -489,7 +508,17 @@ export default function Home() {
           </div>
         </aside>
 
-        <motion.section className="content-stage" style={{ x: contentX, y: contentY }} aria-live="polite">
+      <motion.section className="content-stage" style={{ x: contentX, y: contentY }} aria-live="polite">
+          <AnimatePresence>
+            {isMenuGlitching && <motion.div
+              className="menu-glitch-layer"
+              initial={reduceMotion ? false : { opacity: 0, x: -10 }}
+              animate={reduceMotion ? { opacity: 0 } : { opacity: [0, 0.95, 0.36, 0], x: [-10, 11, -5, 0] }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: MENU_GLITCH_DURATION_MS / 1000, ease: "linear" }}
+              aria-hidden="true"
+            />}
+          </AnimatePresence>
           <AnimatePresence initial={false} mode="wait">
             <motion.div
               key={`chapter-${activeScreen.id}`}
@@ -509,9 +538,9 @@ export default function Home() {
             <motion.div
               key={activeScreen.id}
               className={`screen-pane screen-${activeScreen.id}`}
-              initial={reduceMotion ? false : isMobile ? { opacity: 0, x: 18, y: 4 } : { opacity: 0, x: 46, y: 12, filter: "blur(8px)" }}
+              initial={reduceMotion ? false : { opacity: 0, y: 15, filter: isMobile ? "blur(3px)" : "blur(8px)" }}
               animate={{ opacity: 1, x: 0, y: 0, filter: "blur(0px)" }}
-              exit={reduceMotion ? { opacity: 0 } : isMobile ? { opacity: 0, x: -12, y: -2 } : { opacity: 0, x: -28, y: -6, filter: "blur(5px)" }}
+              exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -6, filter: "blur(4px)" }}
               transition={panelTransition}
             >
               {activeId === "start" && <StartScreen onEnter={() => switchScreen("about")} />}
@@ -689,13 +718,13 @@ function SkillsScreen() {
             className={`skill-card ${selectedSkill === index ? "is-selected" : ""}`}
             key={skill.label}
             onClick={() => setSelectedSkill(index)}
-            style={{ "--skill-accent": skill.color } as CSSProperties}
+            style={{ "--skill-accent": skill.color, "--skill-index": index } as CSSProperties}
             aria-pressed={selectedSkill === index}
           >
             <span className="skill-card-topline"><span className="skill-number">0{index + 1}</span><span className="skill-category">{skill.category}</span><span className="skill-status">[ {skill.status} ]</span></span>
             <span className="skill-name">{skill.label}</span>
             <span className="skill-bar" aria-label={`${skill.label} RPG stat meter`}>
-              {Array.from({ length: 10 }).map((_, segment) => <i key={segment} className={segment < skillSegments[index] ? "is-filled" : ""} />)}
+              {Array.from({ length: 10 }).map((_, segment) => <i key={segment} className={segment < skillSegments[index] ? "is-filled" : ""} style={{ "--segment-index": segment } as CSSProperties} />)}
             </span>
             <span className="skill-level">STAT METER</span>
           </button>
