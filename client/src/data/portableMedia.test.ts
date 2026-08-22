@@ -14,6 +14,12 @@ describe("mission loading cue assets", () => {
     });
   });
 
+  it("uses direct release delivery for Mission Select cues so production never falls through to the app HTML route", () => {
+    for (const cueSource of Object.values(portableMedia.audio.missionTuning)) {
+      expect(cueSource).toContain("github.com/sikander1020/Award-Portfolio/releases/download/portfolio-media-v1/");
+    }
+  });
+
   it("keeps all seven mission cues distinct", () => {
     const cueSources = Object.values(portableMedia.audio.missionTuning);
     expect(cueSources).toHaveLength(7);

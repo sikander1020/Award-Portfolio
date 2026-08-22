@@ -11,10 +11,12 @@ import type { ScreenId } from "./portfolioData";
  */
 
 const releaseBase = "/portfolio-media";
+const githubReleaseBase = "https://github.com/sikander1020/Award-Portfolio/releases/download/portfolio-media-v1";
 
 
 
 const releaseAsset = (fileName: string) => `${releaseBase}/${fileName}`;
+const directReleaseAsset = (fileName: string) => `${githubReleaseBase}/${fileName}`;
 
 
 
@@ -65,19 +67,21 @@ export const portableMedia = {
     bootReady: releaseAsset("vice-boot-ready_f783e2aa.mp3"),
     
     missionPassed: releaseAsset("vice-mission-passed_fb89ebaf.mp3"),
+    // Compact Mission Select cues live in the release rather than the Vercel
+    // public directory. A same-origin path would otherwise fall through to
+    // index.html and be rejected by the audio decoder.
     missionTuning: {
-      start: releaseAsset("mission-city-arrival.mp3"),
-      about: releaseAsset("mission-character-file.mp3"),
-      skills: releaseAsset("mission-operation-skills.mp3"),
-      projects: releaseAsset("mission-project-heist.mp3"),
-      experience: releaseAsset("mission-career-run.mp3"),
-      academy: releaseAsset("mission-training-grounds.mp3"),
-      contact: releaseAsset("mission-open-channel.mp3"),
+      start: directReleaseAsset("mission-city-arrival.mp3"),
+      about: directReleaseAsset("mission-character-file.mp3"),
+      skills: directReleaseAsset("mission-operation-skills.mp3"),
+      projects: directReleaseAsset("mission-project-heist.mp3"),
+      experience: directReleaseAsset("mission-career-run.mp3"),
+      academy: directReleaseAsset("mission-training-grounds.mp3"),
+      contact: directReleaseAsset("mission-open-channel.mp3"),
     } satisfies Record<ScreenId, string>,
   },
   
 } as const;
-
 
 
 
