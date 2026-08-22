@@ -559,3 +559,9 @@
 - [x] Give every portfolio section a distinct Mission Select motion composition while retaining the approved 1.5-second duration and reduced-motion policy.
 - [x] Restore clearly selectable multi-track radio playback and preserve manual MUSIC OFF, track selection, hidden-tab pause, and loading-cue behavior.
 - [x] Add coverage and verify unique transitions plus audible multi-track playback on desktop and mobile before publishing.
+
+## Exit Game farewell experience
+
+- [x] Define a GTA-style session-closing thank-you overlay that does not navigate visitors away from the portfolio.
+- [x] Replace desktop and mobile EXIT GAME toast behavior with the animated farewell sequence and clear return control.
+- [x] Validate exit, dismiss, keyboard, desktop, mobile, reduced-motion, tests, and production build behavior before publishing.

@@ -45,6 +45,7 @@ import { getMobileMotionDurations } from "@/lib/mobileMotion";
 import { canLaunchGithubRepository, PROJECT_LAUNCH_DURATION_MS } from "@/lib/projectLaunch";
 import { getSectionMissionTitle, getSectionMissionVariant, MENU_SECTION_LOADING_DURATION_MS, MENU_SECTION_REVEAL_DELAY_MS, shouldRunMenuTransition } from "@/lib/sectionTransition";
 import { getLocalTimeMode, shouldApplyLocalTimeRadioPreset } from "@/lib/timeMode";
+import { exitFarewellCopy, shouldDismissExitExperience } from "@/lib/exitExperience";
 import { useIsMobile } from "@/hooks/useMobile";
 
 const screenIndex = Object.fromEntries(portfolioData.screens.map((screen, index) => [screen.id, index]));
@@ -72,6 +73,7 @@ export default function Home() {
   const [selectedProject, setSelectedProject] = useState(0);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [launchingProject, setLaunchingProject] = useState<(typeof portfolioData.projects)[number] | null>(null);
+  const [isExitFarewellOpen, setIsExitFarewellOpen] = useState(false);
   const [isBooting, setIsBooting] = useState(
     () => new URLSearchParams(window.location.search).get("preview") !== "scene",
   );
@@ -369,6 +371,9 @@ export default function Home() {
       <AnimatePresence>
         {launchingProject && <ProjectLaunchOverlay project={launchingProject} />}
       </AnimatePresence>
+      <AnimatePresence>
+        {isExitFarewellOpen && <ExitGameFarewellOverlay onReturn={() => setIsExitFarewellOpen(false)} />}
+      </AnimatePresence>
       <AnimatePresence initial={false} mode="sync">
         <motion.div
           key={`backdrop-${activeScreen.id}`}
@@ -501,7 +506,7 @@ export default function Home() {
                       </button>
                     );
                   })}
-                  <button type="button" className="mobile-nav-item mobile-nav-exit" onClick={() => { setMobileNavOpen(false); toast("SESSION PAUSED — your progress is safe."); }}>
+                  <button type="button" className="mobile-nav-item mobile-nav-exit" onClick={() => { setMobileNavOpen(false); setIsExitFarewellOpen(true); }}>
                     <span>08</span><strong>EXIT GAME</strong><MoveUpRight size={15} />
                   </button>
                 </nav>
@@ -538,7 +543,7 @@ export default function Home() {
               <button
                 type="button"
                 className="nav-item exit-item"
-                onClick={() => toast("SESSION PAUSED — your progress is safe.")}
+                onClick={() => setIsExitFarewellOpen(true)}
               >
                 <span className="nav-index">08</span>
                 <span className="nav-label">EXIT GAME</span>
@@ -806,6 +811,41 @@ function ProjectLaunchOverlay({ project }: { project: (typeof portfolioData.proj
     <motion.section className="project-launch-overlay" initial={reduceMotion ? false : { opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: reduceMotion ? 0 : 0.18, ease: cinematicEase }} role="status" aria-live="assertive">
       <div className="project-launch-grid" aria-hidden="true" />
       <div className="project-launch-card"><span>VICE SIGNAL / SECURE UPLINK</span><h2>LAUNCHING<br /><em>MISSION</em></h2><p>{project.title.toUpperCase()}</p><div className="project-launch-track"><i /></div><small>CONNECTING TO VERIFIED GITHUB REPOSITORY</small></div>
+    </motion.section>
+  );
+}
+
+function ExitGameFarewellOverlay({ onReturn }: { onReturn: () => void }) {
+  const reduceMotion = useReducedMotion();
+
+  useEffect(() => {
+    const handleKeyDown = (event: globalThis.KeyboardEvent) => {
+      if (shouldDismissExitExperience(event.key)) onReturn();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [onReturn]);
+
+  return (
+    <motion.section
+      className="exit-farewell-overlay"
+      initial={reduceMotion ? false : { opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: reduceMotion ? 0 : 0.22, ease: cinematicEase }}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="exit-farewell-heading"
+    >
+      <div className="exit-farewell-grid" aria-hidden="true" />
+      <motion.div className="exit-farewell-card" initial={reduceMotion ? false : { opacity: 0, y: 24, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: reduceMotion ? 0 : 0.46, ease: cinematicEase }}>
+        <span>{exitFarewellCopy.channel}</span>
+        <h2 id="exit-farewell-heading">THANKS<br /><em>FOR PLAYING</em></h2>
+        <p>{exitFarewellCopy.message}</p>
+        <div className="exit-farewell-sequence" aria-hidden="true"><i /><i /><i /></div>
+        <button type="button" onClick={onReturn}>{exitFarewellCopy.action} <ChevronRight size={16} /></button>
+        <small>PRESS ESC TO RETURN</small>
+      </motion.div>
     </motion.section>
   );
 }
