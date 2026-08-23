@@ -756,6 +756,7 @@ function StartScreen({ onEnter }: { onEnter: () => void }) {
         AI AGENTS.<br />
         <em>REAL IMPACT.</em>
       </h1>
+      <p className="hero-tagline">AI AUTOMATION EXPERTISE — CONNECTING TOOLS, AUTOMATING WORKFLOWS, REMOVING REPETITIVE WORK.</p>
       <p>{portfolioData.profile.intro}</p>
       <button type="button" className="primary-mission" onClick={onEnter}>
         <span>ENTER CHARACTER FILE</span><ArrowUpRight size={17} />
