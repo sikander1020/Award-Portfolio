@@ -403,6 +403,19 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--vice-pink); out
   .project-actions { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 32px; }
 }
 
+/* Compact screens keep the owner's approved motion video visibly present behind every section. */
+@media (max-width: 720px) {
+  .scene-backdrop.is-scene-motion { background-image: linear-gradient(90deg, rgba(3,3,7,.70) 0%, rgba(4,4,8,.42) 31%, rgba(4,4,8,.10) 68%, rgba(3,3,7,.04) 100%), linear-gradient(0deg, rgba(2,2,5,.28) 0%, transparent 52%, rgba(4,4,8,.06) 100%); }
+  .scene-motion-video { filter: saturate(1.18) contrast(1.04) brightness(1.08); }
+  .scene-dust { opacity: .24; }.grain-layer { opacity: .08; }.ambient-bloom { opacity: .62; }
+  .detail-card, .contact-card { background: linear-gradient(135deg, rgba(6,7,11,.60), rgba(8,8,12,.22)); backdrop-filter: none; -webkit-backdrop-filter: none; }
+  .passport-dossier { background: linear-gradient(135deg, rgba(44,32,26,.44), rgba(13,16,20,.20)); }.passport-grain { opacity: .06; }
+  .evidence-wall { background: radial-gradient(circle at 80% 8%, rgba(201,59,72,.10), transparent 32%), linear-gradient(135deg, rgba(25,18,19,.42), rgba(6,9,13,.18)); }.evidence-wall::before { opacity: .07; }.evidence-file-stack { background: rgba(5,7,10,.18); }.evidence-case { background: linear-gradient(120deg, rgba(9,12,17,.42), rgba(11,10,15,.18)); }
+  .mission-route-map { background: radial-gradient(circle at 78% 14%, rgba(105,191,255,.08), transparent 28%), linear-gradient(130deg, rgba(5,14,22,.40), rgba(8,9,16,.18)); }.mission-route-map::before { opacity: .06; }.career-decoder { background: linear-gradient(100deg, rgba(6,20,30,.34), rgba(6,10,18,.16)); }
+  .training-archive { background: radial-gradient(circle at 10% 96%, rgba(170,255,112,.09), transparent 30%), linear-gradient(135deg, rgba(15,29,16,.36), rgba(6,10,12,.16)); }.training-archive-grid { opacity: .10; }.training-record { background: linear-gradient(100deg, rgba(4,12,8,.24), rgba(7,10,12,.08)); }
+  .signal-intercept-card { background: radial-gradient(circle at 90% 0%, rgba(119,211,255,.08), transparent 28%), linear-gradient(135deg, rgba(13,7,19,.42), rgba(5,10,15,.18)); }.signal-intercept-card::before { opacity: .04; }.signal-intercept-form { background: rgba(4,9,13,.16); }
+}
+
 .mobile-rail-header { display: contents; }
 .mobile-nav-trigger { display: none; }
 
