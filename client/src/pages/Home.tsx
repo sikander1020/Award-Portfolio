@@ -23,6 +23,8 @@ import {
   MapPin,
   Menu,
   MoveUpRight,
+  Network,
+  Play,
   Radio,
   Send,
   Star,
@@ -843,6 +845,7 @@ function ProjectsScreen({ selectedProject, onSelectProject, onMissionPassed, onL
   const [heatmapFilter, setHeatmapFilter] = useState<ProjectHeatmapFilter>("ALL");
   const project = portfolioData.projects[selectedProject];
   const evidence = getProjectEvidenceMeta(project, selectedProject);
+  const explainer = project.explainer;
   const heatmapEntries = portfolioData.projects.map((item, index) => ({ item, index })).filter(({ item }) => projectMatchesHeatmap(item, heatmapFilter));
   const selectHeatmapFilter = (filter: ProjectHeatmapFilter) => {
     setHeatmapFilter(filter);
@@ -870,6 +873,27 @@ function ProjectsScreen({ selectedProject, onSelectProject, onMissionPassed, onL
           <div><dt>SOLUTION</dt><dd>{project.caseStudy.solution}</dd></div>
           <div><dt>RESULT</dt><dd>{project.caseStudy.result}</dd></div>
         </dl>
+        {explainer && <section className="project-explainer" aria-label={`${project.title} architecture diagram and workflow walkthrough`}>
+          <div className="project-explainer-label"><Network size={14} /><span>ARCHITECTURE // VERIFIED COMPONENT MAP</span><i>ILLUSTRATIVE</i></div>
+          <figure className="project-architecture">
+            <img src={explainer.diagram.src} alt={explainer.diagram.alt} loading="lazy" decoding="async" />
+            <figcaption>Diagram reflects documented project components and workflow relationships.</figcaption>
+          </figure>
+          <div className="project-walkthrough">
+            <div className="walkthrough-heading"><span><Play size={13} /> {explainer.walkthrough.title}</span><small>NOT A LIVE PRODUCT RECORDING</small></div>
+            {explainer.walkthrough.kind === "video" && explainer.walkthrough.src ? (
+              <video className="walkthrough-video" controls playsInline preload="none" muted poster={explainer.walkthrough.poster} aria-label={`${project.title} illustrative workflow walkthrough`}>
+                <source src={explainer.walkthrough.src} type="video/mp4" />
+                Your browser does not support the illustrative workflow walkthrough video.
+              </video>
+            ) : (
+              <div className="walkthrough-simulation" role="img" aria-label={`${project.title} illustrative workflow path: ${explainer.walkthrough.stages?.join(", ")}`}>
+                {explainer.walkthrough.stages?.map((stage, index) => <span key={stage} style={{ "--flow-step": index } as CSSProperties}><b>0{index + 1}</b>{stage}</span>)}
+              </div>
+            )}
+            <p>{explainer.walkthrough.summary}</p>
+          </div>
+        </section>}
         <div className="evidence-tags">{project.stack.map((tag) => <span key={tag}>{tag}</span>)}</div>
         <div className="evidence-status"><span>{evidence.status}</span><i aria-hidden="true" /></div>
         <div className="evidence-actions">

@@ -50,6 +50,23 @@ describe("portfolioData real professional profile", () => {
     expect(portfolioData.profile.proofPills).toEqual(["AI AGENTS", "WORKFLOW AUTOMATION", "API INTEGRATIONS"]);
   });
 
+  it("attaches labelled explainers only to the two verified top projects", () => {
+    const [n8n, forgeAI, ...otherProjects] = portfolioData.projects;
+    expect(n8n.explainer).toMatchObject({
+      diagram: { src: portableMedia.projectExplainers.n8nArchitecture },
+      walkthrough: {
+        kind: "video",
+        title: "6-SECOND ILLUSTRATIVE FLOW",
+        poster: portableMedia.projectExplainers.n8nWalkthroughPoster,
+      },
+    });
+    expect(forgeAI.explainer).toMatchObject({
+      diagram: { src: portableMedia.projectExplainers.forgeArchitecture },
+      walkthrough: { kind: "animated", title: "LIVE UI FLOW MAP" },
+    });
+    expect(otherProjects.every((project) => project.explainer === undefined)).toBe(true);
+  });
+
   it("keeps source-backed skills non-quantified and experience project-based", () => {
     expect(portfolioData.skills.every((skill) => !("level" in skill))).toBe(true);
     expect(portfolioData.experience.map((item) => item.period)).toEqual([

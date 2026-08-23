@@ -240,6 +240,19 @@ export const portfolioData = {
         solution: "A curated n8n workflow hub organized for import, reuse and practical AI operations.",
         result: "Covers four workflow domains: AI content, RAG assistants, inbox operations and video automation.",
       },
+      explainer: {
+        diagram: {
+          src: portableMedia.projectExplainers.n8nArchitecture,
+          alt: "N8N Workflow Hub architecture showing a curated automation hub branching to AI content, RAG assistants, inbox operations, video workflows, import guidance, Pinecone and Google Drive.",
+        },
+        walkthrough: {
+          kind: "video" as const,
+          src: portableMedia.projectExplainers.n8nWalkthrough,
+          poster: portableMedia.projectExplainers.n8nWalkthroughPoster,
+          title: "6-SECOND ILLUSTRATIVE FLOW",
+          summary: "A visual walkthrough of the four documented automation domains converging into a reusable workflow library.",
+        },
+      },
     },
     {
       code: "MISSION 02",
@@ -252,6 +265,18 @@ export const portfolioData = {
         problem: "Ethical security workflows need guided investigation without losing control of execution steps.",
         solution: "An AI assistant that combines agent guidance, sandbox execution and model integrations.",
         result: "Brings agent workflows, sandbox execution and API-based model integrations into one project.",
+      },
+      explainer: {
+        diagram: {
+          src: portableMedia.projectExplainers.forgeArchitecture,
+          alt: "ForgeAI architecture showing an authorized user, Next.js interface, API routes, agent orchestration, AI providers, sandbox options, Trigger.dev workflows, Convex data and WorkOS authentication.",
+        },
+        walkthrough: {
+          kind: "animated" as const,
+          title: "LIVE UI FLOW MAP",
+          summary: "An in-page animated walkthrough of the documented request, agent, sandbox, workflow and persistence path; this is not a live product recording.",
+          stages: ["AUTHORIZED REQUEST", "AGENT ORCHESTRATION", "AI + SANDBOX TOOLS", "DURABLE WORKFLOW", "PERSISTED OUTCOME"],
+        },
       },
     },
     {
@@ -266,6 +291,7 @@ export const portfolioData = {
         solution: "A Flask-based AI video workflow that coordinates scripts, voice, merging and processing.",
         result: "Connects script-to-video, voice generation, video merging and a processing interface in one flow.",
       },
+      explainer: undefined,
     },
     {
       code: "MISSION 04",
@@ -278,6 +304,7 @@ export const portfolioData = {
         solution: "A final-year AI assistant project focused on automated responses, user support and API-led development.",
         result: "Combines automated responses, system design, APIs and application development in a verified academic project.",
       },
+      explainer: undefined,
     },
     {
       code: "MISSION 05",
@@ -290,6 +317,7 @@ export const portfolioData = {
         solution: "A web application using ChatGPT-based functionality for marketing content generation.",
         result: "Automates advertising and marketing content generation through an AI-integrated web application.",
       },
+      explainer: undefined,
     },
     {
       code: "MISSION 06",
@@ -303,6 +331,7 @@ export const portfolioData = {
         solution: "A TypeScript storefront with dynamic administration, MongoDB-backed data and commerce-facing integrations.",
         result: "Includes dynamic administration, coupons, reviews, SEO work and catalog event tracking.",
       },
+      explainer: undefined,
     },
   ],
   academy: [
