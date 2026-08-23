@@ -14,6 +14,13 @@ export function getMissionRouteMeta(index: number, total: number) {
   };
 }
 
+export function getAcademyArchiveMeta(index: number, total: number) {
+  return {
+    record: `MODULE ${String(index + 1).padStart(2, "0")}/${String(total).padStart(2, "0")}`,
+    status: index === 0 ? "PRIMARY TRACK" : "ARCHIVE ENTRY",
+  };
+}
+
 export function getSignalInterceptStatus({ hasErrors, isSubmitting, submissionSuccess }: { hasErrors: boolean; isSubmitting: boolean; submissionSuccess: boolean }) {
   if (isSubmitting) return "UPLINK IN PROGRESS";
   if (submissionSuccess) return "TRANSMISSION CONFIRMED";

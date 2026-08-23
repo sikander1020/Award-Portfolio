@@ -44,7 +44,7 @@ import { shouldRenderHeroMotion } from "@/lib/heroMotion";
 import { getMobileMotionDurations } from "@/lib/mobileMotion";
 import { canLaunchGithubRepository, PROJECT_LAUNCH_DURATION_MS } from "@/lib/projectLaunch";
 import { getSectionMissionCueName, getSectionMissionTitle, getSectionMissionVariant, MENU_SECTION_LOADING_DURATION_MS, MENU_SECTION_REVEAL_DELAY_MS, shouldRunMenuTransition } from "@/lib/sectionTransition";
-import { getMissionRouteMeta, getProjectEvidenceMeta, getSignalInterceptStatus } from "@/lib/signatureSections";
+import { getAcademyArchiveMeta, getMissionRouteMeta, getProjectEvidenceMeta, getSignalInterceptStatus } from "@/lib/signatureSections";
 import { getLocalTimeMode, shouldApplyLocalTimeRadioPreset } from "@/lib/timeMode";
 import { exitFarewellCopy, shouldDismissExitExperience } from "@/lib/exitExperience";
 import { useIsMobile } from "@/hooks/useMobile";
@@ -930,14 +930,22 @@ function ExperienceScreen() {
 
 function AcademyScreen() {
   return (
-    <div className="detail-card academy-card">
-      <span className="section-label">05 / TRAINING RECORD</span>
-      <h2>ACADEMY</h2>
-      <p className="large-copy">Training in software engineering, reinforced by self-directed work in AI, automation, backend systems and modern web development.</p>
-      <div className="academy-list">
-        {portfolioData.academy.map((item, index) => <div key={item.label}><span>0{index + 1}</span><strong>{item.label}</strong><small>{item.meta}</small></div>)}
+    <section className="training-archive" aria-label="Academy training archive">
+      <div className="training-archive-grid" aria-hidden="true" />
+      <header className="training-header"><span>VICE SIGNAL / LEARNING ARCHIVE</span><strong>RECORDS // {String(portfolioData.academy.length).padStart(2, "0")}</strong></header>
+      <div className="training-intro"><span className="section-label">05 / TRAINING RECORD</span><h2>TRAINING <em>ARCHIVE</em></h2><p>Software engineering foundations, supported by self-directed work in AI, automation, backend systems and modern web development.</p></div>
+      <div className="training-records">
+        {portfolioData.academy.map((item, index) => {
+          const record = getAcademyArchiveMeta(index, portfolioData.academy.length);
+          return <article className="training-record" key={item.label} style={{ "--training-index": index } as CSSProperties}>
+            <span className="training-index">{String(index + 1).padStart(2, "0")}</span>
+            <div><span>{record.record}</span><h3>{item.label}</h3><p>{item.meta}</p><small>{record.status}</small></div>
+            <i aria-hidden="true" />
+          </article>;
+        })}
       </div>
-    </div>
+      <footer className="training-footer"><span>STATUS // ACTIVE LEARNING PATH</span><span>FIELD // SOFTWARE + AI SYSTEMS</span></footer>
+    </section>
   );
 }
 
@@ -1019,6 +1027,7 @@ function ContactScreen({ onTypingCue, onSocialActivate, onMissionPassed, onValid
   return (
     <section className="contact-card signal-intercept-card">
       <div className="signal-intercept-topline"><span>VICE SIGNAL / INTERCEPT CONSOLE</span><strong>{interceptStatus}</strong></div>
+      <div className="signal-console-ledger" aria-label="Contact channel details"><span>RECIPIENT // {portfolioData.profile.fullName}</span><span>ROUTE // EMAIL CHANNEL</span><span>PROFILE // {portfolioData.profile.role.toUpperCase()}</span></div>
       <span className="section-label">06 / OPEN CHANNEL</span>
       <h2>LET'S BUILD<br /><em>THE NEXT ONE.</em></h2>
       <p>For AI automation, agent workflows and practical software collaborations.</p>

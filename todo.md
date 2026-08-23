@@ -610,3 +610,10 @@
 - [x] Audit the new Passport, Evidence Wall, Route Map, and Signal Intercept surfaces for opacity and overlay layers that obscure approved background videos.
 - [x] Reduce panel and decorative layer opacity selectively so the real About, Projects, Experience, and Contact videos remain clearly visible while copy stays readable.
 - [x] Verify desktop/mobile video presence, foreground contrast, tests, production build, and live deployment before publishing.
+
+## Academy and Contact signature UI enhancement
+
+- [x] Audit Academy record data and Contact transmission controls so real academy content, validation, delivery, social links, and background videos remain intact.
+- [x] Rebuild Academy as a distinctive training dossier with readable, video-visible learning records and responsive mobile composition.
+- [x] Refine Signal Intercept Contact with a stronger communication-console hierarchy while preserving form behavior and video visibility.
+- [x] Add regression coverage and verify desktop/mobile visuals, contact controls, typecheck, tests, production build, and live deployment.
