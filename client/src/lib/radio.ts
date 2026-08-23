@@ -19,3 +19,8 @@ export function cycleRadioStationIndex(currentIndex: number, direction: -1 | 1) 
 export function getRadioStationWaveform(stationId: string) {
   return stationWaveforms[stationId as keyof typeof stationWaveforms] ?? stationWaveforms.V01;
 }
+
+export function getRadioWaveformMode({ isMuted, reduceMotion }: { isMuted: boolean; reduceMotion: boolean }) {
+  if (isMuted) return "muted";
+  return reduceMotion ? "static" : "animated";
+}

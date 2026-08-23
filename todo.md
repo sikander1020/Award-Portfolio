@@ -588,3 +588,9 @@
 - [x] Define a compact station-aware waveform treatment beside the RADIO CUE name without obscuring the existing transition hierarchy.
 - [x] Render animated waveform bars for normal motion and a clear static fallback for reduced-motion visitors.
 - [x] Add regression coverage and verify desktop/mobile overlay legibility, tests, build, and live deployment before publishing.
+
+## Mission Select muted waveform state
+
+- [x] Pass the current music-on/off state into the Mission Select waveform without affecting manual MUSIC OFF behavior.
+- [x] Subtly dim and pause waveform activity while music is off, retaining a readable static station signature.
+- [x] Add coverage and verify both audio-state overlays, tests, build, and live deployment before publishing.
