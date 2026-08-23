@@ -604,3 +604,9 @@
 - [x] Rebuild Experience as a Mission Route Map that preserves chronological career data and readable mobile flow.
 - [x] Rebuild Contact as a Signal Intercept interface while retaining real-time validation, delivery, success feedback, and direct social links.
 - [x] Add focused regression coverage and verify desktop/mobile views, functional links/forms, typecheck, tests, production build, and live deployment.
+
+## Signature section background-video visibility correction
+
+- [x] Audit the new Passport, Evidence Wall, Route Map, and Signal Intercept surfaces for opacity and overlay layers that obscure approved background videos.
+- [x] Reduce panel and decorative layer opacity selectively so the real About, Projects, Experience, and Contact videos remain clearly visible while copy stays readable.
+- [x] Verify desktop/mobile video presence, foreground contrast, tests, production build, and live deployment before publishing.
