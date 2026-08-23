@@ -43,7 +43,7 @@ import { BACKGROUND_MUSIC_VOLUME, MISSION_LOADING_BACKGROUND_VOLUME, MISSION_LOA
 import { shouldRenderHeroMotion } from "@/lib/heroMotion";
 import { getMobileMotionDurations } from "@/lib/mobileMotion";
 import { canLaunchGithubRepository, PROJECT_LAUNCH_DURATION_MS } from "@/lib/projectLaunch";
-import { getSectionMissionTitle, getSectionMissionVariant, MENU_SECTION_LOADING_DURATION_MS, MENU_SECTION_REVEAL_DELAY_MS, shouldRunMenuTransition } from "@/lib/sectionTransition";
+import { getSectionMissionCueName, getSectionMissionTitle, getSectionMissionVariant, MENU_SECTION_LOADING_DURATION_MS, MENU_SECTION_REVEAL_DELAY_MS, shouldRunMenuTransition } from "@/lib/sectionTransition";
 import { getLocalTimeMode, shouldApplyLocalTimeRadioPreset } from "@/lib/timeMode";
 import { exitFarewellCopy, shouldDismissExitExperience } from "@/lib/exitExperience";
 import { useIsMobile } from "@/hooks/useMobile";
@@ -858,6 +858,9 @@ function SectionMissionLoadingOverlay({ screen }: { screen: { id: ScreenId; navL
         <span>VICE SIGNAL / {variant.code}</span>
         <h2>LOADING<br /><em>{getSectionMissionTitle(screen.id)}</em></h2>
         <p>PREPARING {screen.subtitle}</p>
+        <motion.div className="section-mission-cue" initial={reduceMotion ? false : { opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: reduceMotion ? 0 : 0.18, delay: reduceMotion ? 0 : 0.08, ease: cinematicEase }}>
+          <span>RADIO CUE</span><strong>{getSectionMissionCueName(screen.id)}</strong>
+        </motion.div>
         <div className="section-mission-track"><i /></div>
         <small>{variant.signal}</small>
       </motion.div>

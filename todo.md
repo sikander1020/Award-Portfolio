@@ -576,3 +576,9 @@
 - [x] Make dedicated Mission Select cues reliably audible for every section while preserving manual MUSIC OFF, hidden-tab pause, and multi-track radio playback.
 - [x] Add regression coverage and validate all transition audio paths, desktop/mobile controls, tests, and production build before publishing.
 - [x] Route every Mission Select cue through its direct release asset path so Vercel cannot serve the portfolio HTML in place of audio.
+
+## Mission Select cue-name indicator
+
+- [x] Define a compact, optional cue-name label for every section transition without competing with the mission title or progress indicator.
+- [x] Render the cue-name label responsively during pointer-driven Mission Select overlays while preserving reduced-motion and keyboard behavior.
+- [x] Add coverage and verify desktop/mobile overlay legibility, tests, build, and live deployment before publishing.

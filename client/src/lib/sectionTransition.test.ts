@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getSectionMissionTitle, getSectionMissionVariant, MENU_SECTION_LOADING_DURATION_MS, MENU_SECTION_REVEAL_DELAY_MS, sectionMissionVariants, shouldRunMenuTransition } from "./sectionTransition";
+import { getSectionMissionCueName, getSectionMissionTitle, getSectionMissionVariant, MENU_SECTION_LOADING_DURATION_MS, MENU_SECTION_REVEAL_DELAY_MS, sectionMissionVariants, shouldRunMenuTransition } from "./sectionTransition";
 
 describe("section transition policy", () => {
   it("uses a compact mission-loading envelope before revealing a new menu section", () => {
@@ -17,6 +17,13 @@ describe("section transition policy", () => {
     expect(getSectionMissionTitle("skills")).toBe("Operation: Skills");
     expect(getSectionMissionTitle("projects")).toBe("Project Heist");
     expect(getSectionMissionTitle("contact")).toBe("Open Channel");
+  });
+
+  it("maps every requested section to a compact cue-name indicator", () => {
+    expect(getSectionMissionCueName("skills")).toBe("OPERATION SKILLS TUNE");
+    expect(getSectionMissionCueName("projects")).toBe("PROJECT HEIST TUNE");
+    expect(getSectionMissionCueName("contact")).toBe("OPEN CHANNEL TUNE");
+    expect(getSectionMissionCueName("unknown")).toBe("VICE SIGNAL TUNE");
   });
 
   it("gives each section a distinct loading composition instead of a shared static card", () => {

@@ -11,6 +11,16 @@ const sectionMissionTitles: Record<string, string> = {
   contact: "Open Channel",
 };
 
+const sectionMissionCueNames: Record<string, string> = {
+  start: "CITY ARRIVAL TUNE",
+  about: "CHARACTER FILE TUNE",
+  skills: "OPERATION SKILLS TUNE",
+  projects: "PROJECT HEIST TUNE",
+  experience: "CAREER RUN TUNE",
+  academy: "TRAINING GROUNDS TUNE",
+  contact: "OPEN CHANNEL TUNE",
+};
+
 export const sectionMissionVariants = {
   start: { id: "arrival", code: "ROUTE 01", signal: "CITY GATEWAY LOCKED" },
   about: { id: "dossier", code: "FILE 02", signal: "IDENTITY DOSSIER SCANNED" },
@@ -25,6 +35,10 @@ export type SectionMissionVariant = (typeof sectionMissionVariants)[keyof typeof
 
 export function getSectionMissionTitle(sectionId: string) {
   return sectionMissionTitles[sectionId] ?? "Vice Signal Operation";
+}
+
+export function getSectionMissionCueName(sectionId: string) {
+  return sectionMissionCueNames[sectionId] ?? "VICE SIGNAL TUNE";
 }
 
 export function getSectionMissionVariant(sectionId: string): SectionMissionVariant {
