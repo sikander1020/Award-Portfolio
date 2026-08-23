@@ -45,6 +45,9 @@ export const portfolioData = {
     availability: "SEEKING AI ENGINEERING ROLES",
     intro:
       "Software Engineering graduate with hands-on experience building AI-powered applications, automation systems and full-stack software projects.",
+    valuePromise:
+      "I build AI automation systems that connect real tools, streamline repetitive work and turn manual workflows into reliable software.",
+    proofPills: ["AI AGENTS", "WORKFLOW AUTOMATION", "API INTEGRATIONS"],
     about:
       "Experienced with Python, Flask, AI integrations, video automation, AI agents, REST APIs, Git/GitHub and modern web technologies. Built independent projects including an AI-powered video automation platform and an AI penetration-testing assistant.",
     speciality: "AI AGENTS + WORKFLOWS",
@@ -232,6 +235,11 @@ export const portfolioData = {
       description: "A curated workflow collection for AI content, RAG assistants, inbox operations and video automation, organized for safe import and reuse.",
       stack: ["n8n", "RAG", "Pinecone", "Google Drive"],
       href: "https://github.com/sikander1020/N8N-Workflows",
+      caseStudy: {
+        problem: "Reusable automation flows need a clear, safe starting point instead of being rebuilt from scratch.",
+        solution: "A curated n8n workflow hub organized for import, reuse and practical AI operations.",
+        result: "Covers four workflow domains: AI content, RAG assistants, inbox operations and video automation.",
+      },
     },
     {
       code: "MISSION 02",
@@ -240,6 +248,11 @@ export const portfolioData = {
       description: "An AI-powered penetration-testing assistant for ethical security testing and bug-bounty workflows, combining agent guidance with sandbox execution and model integrations.",
       stack: ["TypeScript", "AI Agents", "Sandbox", "APIs"],
       href: "https://github.com/sikander1020/Forge-AI-Pentest-Assistant",
+      caseStudy: {
+        problem: "Ethical security workflows need guided investigation without losing control of execution steps.",
+        solution: "An AI assistant that combines agent guidance, sandbox execution and model integrations.",
+        result: "Brings agent workflows, sandbox execution and API-based model integrations into one project.",
+      },
     },
     {
       code: "MISSION 03",
@@ -248,6 +261,11 @@ export const portfolioData = {
       description: "An AI-powered short-form video creation platform with voice generation, video merging, script-to-video workflows and a Flask-based processing interface.",
       stack: ["Python", "Flask", "FFmpeg", "Edge TTS"],
       href: "https://github.com/sikander1020/Facebook-Automation",
+      caseStudy: {
+        problem: "Short-form video production requires several repeatable creation and processing steps.",
+        solution: "A Flask-based AI video workflow that coordinates scripts, voice, merging and processing.",
+        result: "Connects script-to-video, voice generation, video merging and a processing interface in one flow.",
+      },
     },
     {
       code: "MISSION 04",
@@ -255,6 +273,11 @@ export const portfolioData = {
       type: "AI HEALTH ASSISTANT",
       description: "A CV-verified Final Year Project: an AI-powered assistant built around automated responses, user assistance, system design, APIs and application development.",
       stack: ["AI Integration", "Automation", "APIs", "Software Engineering"],
+      caseStudy: {
+        problem: "Users need responsive assistance through a structured software system.",
+        solution: "A final-year AI assistant project focused on automated responses, user support and API-led development.",
+        result: "Combines automated responses, system design, APIs and application development in a verified academic project.",
+      },
     },
     {
       code: "MISSION 05",
@@ -262,6 +285,11 @@ export const portfolioData = {
       type: "AI MARKETING TOOL",
       description: "A CV-verified web application that uses ChatGPT-based functionality to automate advertising and marketing content generation.",
       stack: ["ChatGPT", "AI Integration", "Web Application"],
+      caseStudy: {
+        problem: "Advertising and marketing teams often repeat the same content-generation tasks.",
+        solution: "A web application using ChatGPT-based functionality for marketing content generation.",
+        result: "Automates advertising and marketing content generation through an AI-integrated web application.",
+      },
     },
     {
       code: "MISSION 06",
@@ -270,6 +298,11 @@ export const portfolioData = {
       description: "A TypeScript-based clothing storefront with dynamic administration, coupons, reviews, MongoDB-backed data handling, SEO work and catalog event tracking.",
       stack: ["Next.js", "TypeScript", "MongoDB", "Meta Pixel"],
       href: "https://github.com/sikander1020/zaybaash",
+      caseStudy: {
+        problem: "A storefront needs more than a catalog: administration, promotions, data handling and discoverability must work together.",
+        solution: "A TypeScript storefront with dynamic administration, MongoDB-backed data and commerce-facing integrations.",
+        result: "Includes dynamic administration, coupons, reviews, SEO work and catalog event tracking.",
+      },
     },
   ],
   academy: [

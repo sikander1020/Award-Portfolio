@@ -44,6 +44,12 @@ describe("portfolioData real professional profile", () => {
     expect(portfolioData.projects.filter((project) => !project.href).map((project) => project.title)).toEqual(["MediBot", "AI Ad Generator"]);
   });
 
+  it("provides source-backed Problem, Solution and Result scanning cues for every project without inventing numeric outcomes", () => {
+    expect(portfolioData.projects.every((project) => Boolean(project.caseStudy.problem) && Boolean(project.caseStudy.solution) && Boolean(project.caseStudy.result))).toBe(true);
+    expect(JSON.stringify(portfolioData.projects)).not.toMatch(/saved \d+|\d+ users|\d+%/i);
+    expect(portfolioData.profile.proofPills).toEqual(["AI AGENTS", "WORKFLOW AUTOMATION", "API INTEGRATIONS"]);
+  });
+
   it("keeps source-backed skills non-quantified and experience project-based", () => {
     expect(portfolioData.skills.every((skill) => !("level" in skill))).toBe(true);
     expect(portfolioData.experience.map((item) => item.period)).toEqual([

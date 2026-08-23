@@ -39,8 +39,9 @@ import { CONTACT_SUCCESS_VISIBLE_MS, getContactSuccessCopy } from "@/lib/contact
 import { submitContactTransmission } from "@/lib/contactDelivery";
 import { shouldEscalateWantedLevel, validateContactField, validateContactForm, type ContactField, type ContactFormErrors, type ContactFormValues } from "@/lib/contactValidation";
 import { cycleRadioStationIndex, getRadioStationWaveform, getRadioWaveformMode, radioStations } from "@/lib/radio";
-import { BACKGROUND_MUSIC_VOLUME, MISSION_LOADING_BACKGROUND_VOLUME, MISSION_LOADING_CUE_VOLUME, attemptAudioPlayback, attemptBackgroundAutoplay, playMissionLoadingCue, resumeBackgroundAudio, shouldAutoStartBackgroundAudio, shouldPlayMissionLoadingCue, shouldResumeBackgroundAudio, shouldStartBlockedAutoplayOnUserInteraction } from "@/lib/audio";
+import { BACKGROUND_MUSIC_VOLUME, MISSION_LOADING_BACKGROUND_VOLUME, MISSION_LOADING_CUE_VOLUME, attemptAudioPlayback, attemptBackgroundAutoplay, playMissionLoadingCue, resumeBackgroundAudio, shouldAutoStartBackgroundAudio, shouldPlayMissionLoadingCue, shouldResumeBackgroundAudio } from "@/lib/audio";
 import { shouldRenderHeroMotion } from "@/lib/heroMotion";
+import { getActiveVideoPreload, shouldPauseMobileSceneVideo, shouldWarmSceneVideos } from "@/lib/mediaPlayback";
 import { getMobileMotionDurations } from "@/lib/mobileMotion";
 import { canLaunchGithubRepository, PROJECT_LAUNCH_DURATION_MS } from "@/lib/projectLaunch";
 import { getSectionMissionCueName, getSectionMissionTitle, getSectionMissionVariant, MENU_SECTION_LOADING_DURATION_MS, MENU_SECTION_REVEAL_DELAY_MS, shouldRunMenuTransition } from "@/lib/sectionTransition";
@@ -91,6 +92,7 @@ export default function Home() {
   const [loadingSection, setLoadingSection] = useState<ScreenId | null>(null);
   const backgroundAudioRef = useRef<HTMLAudioElement>(null);
   const missionLoadingAudioRef = useRef<HTMLAudioElement>(null);
+  const sceneVideoRef = useRef<HTMLVideoElement>(null);
   const backgroundAudioStartAttemptedRef = useRef(false);
   const resumeBackgroundAfterVisibilityRef = useRef(false);
   const sectionTransitionSequenceRef = useRef(0);
@@ -129,6 +131,13 @@ export default function Home() {
   const renderMotionVideo = renderHeroMotion || renderSceneMotion;
   const activeMotionVideo = renderHeroMotion ? portfolioData.media.heroVideo : activeSceneVideo;
   const activeRadioStation = radioStations[radioStationIndex];
+  const warmSceneVideos = shouldWarmSceneVideos({
+    isBooting,
+    isMobile,
+    reduceMotion: Boolean(reduceMotion),
+  });
+  const activeVideoPreload = getActiveVideoPreload(isMobile);
+
   const enableAudio = () => {
     backgroundAudioStartAttemptedRef.current = true;
     setHasUserMuted(false);
@@ -152,13 +161,13 @@ export default function Home() {
     });
   };
 
-  const startBlockedAudioOnInteraction = () => {
-    const backgroundAudio = backgroundAudioRef.current;
-    if (!backgroundAudio || !shouldStartBlockedAutoplayOnUserInteraction({ hasUserMuted, isPaused: backgroundAudio.paused })) return;
-
-    backgroundAudioStartAttemptedRef.current = true;
-    setIsMuted(false);
-    void attemptAudioPlayback(backgroundAudio, BACKGROUND_MUSIC_VOLUME).then((didPlay) => setIsMuted(!didPlay));
+  const unlockBackgroundAudioFromInteraction = () => {
+    if (!shouldAutoStartBackgroundAudio({
+      isBooting,
+      hasUserMuted,
+      hasAlreadyStarted: backgroundAudioStartAttemptedRef.current,
+    })) return;
+    enableAudio();
   };
 
   useEffect(() => {
@@ -200,6 +209,22 @@ export default function Home() {
     document.addEventListener("visibilitychange", handleVisibilityChange);
     return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
   }, [hasUserMuted, isMuted]);
+
+  useEffect(() => {
+    if (!isMobile || !renderMotionVideo) return;
+    const syncMobileSceneVideo = () => {
+      const video = sceneVideoRef.current;
+      if (!video) return;
+      if (shouldPauseMobileSceneVideo({ isMobile, isDocumentHidden: document.hidden })) {
+        video.pause();
+        return;
+      }
+      void video.play().catch(() => undefined);
+    };
+    syncMobileSceneVideo();
+    document.addEventListener("visibilitychange", syncMobileSceneVideo);
+    return () => document.removeEventListener("visibilitychange", syncMobileSceneVideo);
+  }, [activeMotionVideo?.src, isMobile, renderMotionVideo]);
 
   useEffect(() => {
     const cue = missionLoadingAudioRef.current;
@@ -347,12 +372,12 @@ export default function Home() {
       className="vice-portfolio"
       data-time-mode={timeMode.id}
       onKeyDown={handleKeyDown}
+      onPointerDownCapture={unlockBackgroundAudioFromInteraction}
       onPointerMove={handlePointerParallax}
       onPointerLeave={() => {
         pointerX.set(0);
         pointerY.set(0);
       }}
-      onPointerDownCapture={startBlockedAudioOnInteraction}
       tabIndex={0}
       aria-label="Interactive portfolio game menu"
     >
@@ -361,8 +386,8 @@ export default function Home() {
       <AnimatePresence>
         {isBooting && <BootIntro heroArt={heroArt} onComplete={() => setIsBooting(false)} onEnableAudio={enableAudio} />}
       </AnimatePresence>
-      {!isBooting && !reduceMotion && <div className="scene-video-warmup" aria-hidden="true">
-        {sceneVideoWarmupSources.map((src) => <video key={src} src={src} preload="auto" muted playsInline />)}
+      {warmSceneVideos && <div className="scene-video-warmup" aria-hidden="true">
+        {sceneVideoWarmupSources.map((src) => <video key={src} preload="auto" muted playsInline><source src={src} type="video/mp4" /></video>)}
       </div>}
       <AnimatePresence>
         {missionPassed && <MissionPassedOverlay projectTitle={missionPassed} onDismiss={() => { setMissionPassed(null); setIsMissionPreview(false); }} />}
@@ -400,15 +425,18 @@ export default function Home() {
       <AnimatePresence initial={false}>
         {renderMotionVideo && activeMotionVideo && <motion.video
           key={`approved-motion-${activeScreen.id}`}
+          ref={sceneVideoRef}
           className="scene-motion-video"
           style={sceneVisualStyle}
-          src={activeMotionVideo.src}
           poster={activeArt}
           autoPlay
           loop
           muted
           playsInline
-          preload="auto"
+          preload={activeVideoPreload}
+          onCanPlay={(event) => {
+            if (!shouldPauseMobileSceneVideo({ isMobile, isDocumentHidden: document.hidden })) void event.currentTarget.play().catch(() => undefined);
+          }}
           onError={() => {
             if (activeId === "start") setHeroVideoFailed(true);
             else setSceneVideoFailures((current) => ({ ...current, [activeId]: true }));
@@ -418,7 +446,7 @@ export default function Home() {
           exit={{ opacity: 0 }}
           transition={{ duration: reduceMotion ? 0 : 0.38, ease: cinematicEase }}
           aria-hidden="true"
-        />}
+        ><source src={activeMotionVideo.src} type="video/mp4" /></motion.video>}
       </AnimatePresence>
       <motion.div className="ambient-bloom" style={{ x: portraitX, y: portraitY }} aria-hidden="true" />
       <AnimatePresence initial={false} mode="sync">
@@ -452,6 +480,7 @@ export default function Home() {
           >
             <Download size={13} /> DOWNLOAD CV
           </a>
+          <button type="button" className="hud-hire-action" onClick={() => switchScreen("contact")}><Mail size={13} /> HIRE ME <ArrowUpRight size={12} /></button>
           <div className={`hud-radio ${isMuted ? "is-muted" : ""}`} aria-label="Radio station player">
             <button type="button" className="hud-radio-toggle" onClick={toggleAudio} aria-label={isMuted ? "Turn music on" : "Turn music off"}>{isMuted ? <VolumeX size={13} /> : <Volume2 size={13} />}<span><b className="music-prefix">MUSIC </b>{isMuted ? "OFF" : "ON"}</span></button>
             <button type="button" className="hud-radio-station" onClick={() => changeRadioStation(1)} aria-label={`Change track; current station is ${activeRadioStation.title}`}><span>{activeRadioStation.id}</span><strong>{activeRadioStation.title}</strong><ChevronRight size={12} /></button>
@@ -509,6 +538,12 @@ export default function Home() {
                     <span>08</span><strong>EXIT GAME</strong><MoveUpRight size={15} />
                   </button>
                 </nav>
+                <div className="mobile-hire-actions" aria-label="Professional contact actions">
+                  <button type="button" onClick={() => switchScreen("contact")}><Mail size={15} /> HIRE ME <ArrowUpRight size={14} /></button>
+                  <a href={portfolioData.profile.socials[0].href} target="_blank" rel="noreferrer"><Github size={15} /> GITHUB</a>
+                  <a href={portfolioData.profile.socials[1].href} target="_blank" rel="noreferrer"><Linkedin size={15} /> LINKEDIN</a>
+                  <a href={portableMedia.cv} download="Sikandar_Jadoon_AI_Automation_CV.pdf"><Download size={15} /> DOWNLOAD CV</a>
+                </div>
               </SheetContent>
             </Sheet>
           </div>
@@ -585,13 +620,13 @@ export default function Home() {
               exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -6, filter: "blur(4px)" }}
               transition={panelTransition}
             >
-              {activeId === "start" && <StartScreen onEnter={() => switchScreen("about")} />}
+              {activeId === "start" && <StartScreen onViewProjects={() => switchScreen("projects")} onHire={() => switchScreen("contact")} />}
               {activeId === "about" && <AboutScreen />}
               {activeId === "skills" && <SkillsScreen />}
               {activeId === "projects" && <ProjectsScreen selectedProject={selectedProject} onSelectProject={setSelectedProject} onMissionPassed={handleMissionPassed} onLaunchRepository={launchGithubRepository} />}
               {activeId === "experience" && <ExperienceScreen />}
               {activeId === "academy" && <AcademyScreen />}
-              {activeId === "contact" && <ContactScreen onTypingCue={() => undefined} onSocialActivate={() => undefined} onMissionPassed={handleContactMissionPassed} onValidationError={registerWantedLevelError} />}
+              {activeId === "contact" && <ContactScreen onSocialActivate={() => undefined} onMissionPassed={handleContactMissionPassed} onValidationError={registerWantedLevelError} />}
             </motion.div>
           </AnimatePresence>
 
@@ -711,20 +746,32 @@ function BootIntro({ heroArt, onComplete, onEnableAudio }: { heroArt: string; on
   );
 }
 
-function StartScreen({ onEnter }: { onEnter: () => void }) {
+function StartScreen({ onViewProjects, onHire }: { onViewProjects: () => void; onHire: () => void }) {
   return (
     <div className="start-screen">
-      <span className="eyebrow">INTERACTIVE PORTFOLIO / 2026</span>
+      <span className="eyebrow">AI AUTOMATION ENGINEER / AVAILABLE FOR COLLABORATION</span>
       <h1>
-        AI AGENTS.<br />
-        <em>REAL IMPACT.</em>
+        AI AUTOMATION<br />
+        <em>THAT SHIPS.</em>
       </h1>
-      <p>{portfolioData.profile.intro}</p>
-      <button type="button" className="primary-mission" onClick={onEnter}>
-        <span>ENTER CHARACTER FILE</span><ArrowUpRight size={17} />
-      </button>
-      <div className="mission-strip">
-        <span>MISSION STATUS</span><strong>READY TO PLAY</strong><span className="mission-light" />
+      <p className="hero-value-prop">{portfolioData.profile.valuePromise}</p>
+      <div className="hero-proof-list" aria-label="Core capabilities">
+        {portfolioData.profile.proofPills.map((proof) => <span key={proof}>{proof}</span>)}
+      </div>
+      <div className="hero-actions">
+        <button type="button" className="primary-mission" onClick={onViewProjects}>
+          <span>VIEW CASE STUDIES</span><ArrowUpRight size={17} />
+        </button>
+        <button type="button" className="secondary-mission" onClick={onHire}>
+          <Mail size={16} /><span>HIRE ME</span>
+        </button>
+      </div>
+      <div className="hero-social-links" aria-label="Professional profiles">
+        <a href={portfolioData.profile.socials[0].href} target="_blank" rel="noreferrer"><Github size={15} /> GITHUB PROFILE <ArrowUpRight size={13} /></a>
+        <a href={portfolioData.profile.socials[1].href} target="_blank" rel="noreferrer"><Linkedin size={15} /> LINKEDIN PROFILE <ArrowUpRight size={13} /></a>
+      </div>
+      <div className="mission-strip hero-signal-strip">
+        <span>MISSION STATUS</span><strong>OPEN TO AI AUTOMATION ROLES</strong><span className="mission-light" />
       </div>
     </div>
   );
@@ -818,6 +865,11 @@ function ProjectsScreen({ selectedProject, onSelectProject, onMissionPassed, onL
         <div className="evidence-case-meta"><span>{evidence.marker} // {project.type}</span><strong>{evidence.source}</strong></div>
         <h2>{project.title}</h2>
         <p>{project.description}</p>
+        <dl className="evidence-brief" aria-label={`${project.title} case study summary`}>
+          <div><dt>PROBLEM</dt><dd>{project.caseStudy.problem}</dd></div>
+          <div><dt>SOLUTION</dt><dd>{project.caseStudy.solution}</dd></div>
+          <div><dt>RESULT</dt><dd>{project.caseStudy.result}</dd></div>
+        </dl>
         <div className="evidence-tags">{project.stack.map((tag) => <span key={tag}>{tag}</span>)}</div>
         <div className="evidence-status"><span>{evidence.status}</span><i aria-hidden="true" /></div>
         <div className="evidence-actions">
@@ -969,7 +1021,7 @@ function AcademyScreen() {
   );
 }
 
-function ContactScreen({ onTypingCue, onSocialActivate, onMissionPassed, onValidationError }: { onTypingCue: () => void; onSocialActivate: () => void; onMissionPassed: () => void; onValidationError: () => void }) {
+function ContactScreen({ onSocialActivate, onMissionPassed, onValidationError }: { onSocialActivate: () => void; onMissionPassed: () => void; onValidationError: () => void }) {
   const [form, setForm] = useState<ContactFormValues>({ name: "", email: "", subject: "", message: "" });
   const [fieldErrors, setFieldErrors] = useState<ContactFormErrors>({});
   const [touchedFields, setTouchedFields] = useState<Partial<Record<ContactField, boolean>>>({});
@@ -1029,7 +1081,6 @@ function ContactScreen({ onTypingCue, onSocialActivate, onMissionPassed, onValid
     if (shouldEscalateWantedLevel(errorStateRef.current[field], error)) onValidationError();
     errorStateRef.current = { ...errorStateRef.current, [field]: error };
     setFieldErrors((current) => ({ ...current, [field]: error }));
-    onTypingCue();
   };
 
   const validateOnBlur = (field: ContactField) => {
