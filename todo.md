@@ -617,3 +617,11 @@
 - [x] Rebuild Academy as a distinctive training dossier with readable, video-visible learning records and responsive mobile composition.
 - [x] Refine Signal Intercept Contact with a stronger communication-console hierarchy while preserving form behavior and video visibility.
 - [x] Add regression coverage and verify desktop/mobile visuals, contact controls, typecheck, tests, production build, and live deployment.
+
+## Portfolio exploration interfaces
+
+- [x] Audit existing Skills, Projects, and Experience data so the new controls use only authentic skills, tags, project links, and career records.
+- [x] Add a keyboard-accessible Skill Loadout Wheel with selected-skill detail while preserving the current stat cards.
+- [x] Add a keyboard-accessible Project Heatmap that filters the Evidence Wall using existing project tags without hiding repository-launch flows.
+- [x] Add a Career Decoder detail panel for selected Mission Route milestones while preserving the chronological route map.
+- [x] Add focused regression coverage and verify desktop/mobile exploration controls, reduced-motion behavior, tests, production build, and live deployment.

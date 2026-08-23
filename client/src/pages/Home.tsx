@@ -45,6 +45,7 @@ import { getMobileMotionDurations } from "@/lib/mobileMotion";
 import { canLaunchGithubRepository, PROJECT_LAUNCH_DURATION_MS } from "@/lib/projectLaunch";
 import { getSectionMissionCueName, getSectionMissionTitle, getSectionMissionVariant, MENU_SECTION_LOADING_DURATION_MS, MENU_SECTION_REVEAL_DELAY_MS, shouldRunMenuTransition } from "@/lib/sectionTransition";
 import { getAcademyArchiveMeta, getMissionRouteMeta, getProjectEvidenceMeta, getSignalInterceptStatus } from "@/lib/signatureSections";
+import { getCareerDecoderMeta, PROJECT_HEATMAP_FILTERS, projectMatchesHeatmap, type ProjectHeatmapFilter } from "@/lib/exploration";
 import { getLocalTimeMode, shouldApplyLocalTimeRadioPreset } from "@/lib/timeMode";
 import { exitFarewellCopy, shouldDismissExitExperience } from "@/lib/exitExperience";
 import { useIsMobile } from "@/hooks/useMobile";
@@ -756,6 +757,7 @@ function AboutScreen() {
 function SkillsScreen() {
   const [selectedSkill, setSelectedSkill] = useState(0);
   const skillSegments = [10, 10, 10, 10, 9];
+  const activeSkill = portfolioData.skills[selectedSkill];
   return (
     <div className="detail-card skills-card">
       <span className="section-label">02 / STAT SHEET</span>
@@ -779,20 +781,34 @@ function SkillsScreen() {
           </button>
         ))}
       </div>
+      <section className="skill-loadout-wheel" aria-label="Skill loadout wheel">
+        <div className="loadout-core" style={{ "--skill-accent": activeSkill.color } as CSSProperties}><span>ACTIVE LOADOUT</span><strong>{activeSkill.label}</strong><small>{activeSkill.category} // {activeSkill.status}</small></div>
+        <div className="loadout-ring" aria-label="Select a skill loadout">
+          {portfolioData.skills.map((skill, index) => <button key={skill.label} type="button" className={selectedSkill === index ? "is-selected" : ""} onClick={() => setSelectedSkill(index)} aria-pressed={selectedSkill === index} style={{ "--wheel-angle": `${index * 72}deg`, "--skill-accent": skill.color } as CSSProperties}><span>0{index + 1}</span><small>{skill.category}</small></button>)}
+        </div>
+      </section>
         <p className="micro-copy">BUILD PRACTICAL SYSTEMS. AUTOMATE THE REPETITIVE WORK.</p>
     </div>
   );
 }
 
 function ProjectsScreen({ selectedProject, onSelectProject, onMissionPassed, onLaunchRepository }: { selectedProject: number; onSelectProject: (index: number) => void; onMissionPassed: (projectTitle: string) => void; onLaunchRepository: (project: (typeof portfolioData.projects)[number]) => void }) {
+  const [heatmapFilter, setHeatmapFilter] = useState<ProjectHeatmapFilter>("ALL");
   const project = portfolioData.projects[selectedProject];
   const evidence = getProjectEvidenceMeta(project, selectedProject);
+  const heatmapEntries = portfolioData.projects.map((item, index) => ({ item, index })).filter(({ item }) => projectMatchesHeatmap(item, heatmapFilter));
+  const selectHeatmapFilter = (filter: ProjectHeatmapFilter) => {
+    setHeatmapFilter(filter);
+    const firstVisible = portfolioData.projects.findIndex((item) => projectMatchesHeatmap(item, filter));
+    if (firstVisible >= 0) onSelectProject(firstVisible);
+  };
   return (
     <section className="evidence-wall" aria-label="Project evidence wall">
       <header className="evidence-wall-header"><span>VICE SIGNAL / EVIDENCE BOARD</span><strong>{evidence.caseId}</strong></header>
+      <div className="project-heatmap" aria-label="Filter project evidence by capability"><span>HEATMAP //</span>{PROJECT_HEATMAP_FILTERS.map((filter) => <button key={filter} type="button" className={heatmapFilter === filter ? "is-selected" : ""} onClick={() => selectHeatmapFilter(filter)} aria-pressed={heatmapFilter === filter}>{filter}</button>)}</div>
       <div className="evidence-wall-layout">
       <div className="evidence-file-stack" aria-label="Project selector">
-        {portfolioData.projects.map((item, index) => (
+        {heatmapEntries.map(({ item, index }) => (
           <button key={item.title} type="button" onClick={() => onSelectProject(index)} className={`evidence-file ${selectedProject === index ? "is-selected" : ""}`}>
             <span className="evidence-pin" aria-hidden="true" /><span>{item.code.replace("MISSION", "CASE")}</span><strong>{item.title}</strong><ChevronRight size={14} />
           </button>
@@ -909,6 +925,9 @@ export function MissionPassedOverlay({ projectTitle, onDismiss }: { projectTitle
 }
 
 function ExperienceScreen() {
+  const [selectedStop, setSelectedStop] = useState(0);
+  const selectedExperience = portfolioData.experience[selectedStop];
+  const decoder = getCareerDecoderMeta(selectedStop, portfolioData.experience.length);
   return (
     <section className="mission-route-map" aria-label="Career mission route map">
       <header><span className="section-label">04 / MISSION ROUTE</span><strong>CAREER GRID // LIVE</strong></header>
@@ -917,13 +936,14 @@ function ExperienceScreen() {
       <div className="route-network">
         {portfolioData.experience.map((item, index) => {
           const route = getMissionRouteMeta(index, portfolioData.experience.length);
-          return <article className="route-stop" key={`${item.period}-${item.role}`} style={{ "--route-index": index } as CSSProperties}>
+          return <button type="button" className={`route-stop ${selectedStop === index ? "is-selected" : ""}`} key={`${item.period}-${item.role}`} onClick={() => setSelectedStop(index)} aria-pressed={selectedStop === index} style={{ "--route-index": index } as CSSProperties}>
             <span className="route-node">{String(index + 1).padStart(2, "0")}</span>
             <div className="route-content"><span>{route.checkpoint}</span><h3>{item.role}</h3><p>{item.detail}</p><small>{item.period} // {route.status}</small></div>
             {index < portfolioData.experience.length - 1 && <i className="route-link" aria-hidden="true" />}
-          </article>;
+          </button>;
         })}
       </div>
+      <aside className="career-decoder" aria-live="polite"><div><span>{decoder.channel}</span><strong>{decoder.state}</strong></div><h3>{selectedExperience.role}</h3><p>{selectedExperience.detail}</p><small>{selectedExperience.period}</small></aside>
     </section>
   );
 }
