@@ -622,7 +622,7 @@ export default function Home() {
               exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -6, filter: "blur(4px)" }}
               transition={panelTransition}
             >
-              {activeId === "start" && <StartScreen onViewProjects={() => switchScreen("projects")} onHire={() => switchScreen("contact")} />}
+              {activeId === "start" && <StartScreen onEnter={() => switchScreen("about")} />}
               {activeId === "about" && <AboutScreen />}
               {activeId === "skills" && <SkillsScreen />}
               {activeId === "projects" && <ProjectsScreen selectedProject={selectedProject} onSelectProject={setSelectedProject} onMissionPassed={handleMissionPassed} onLaunchRepository={launchGithubRepository} />}
@@ -748,32 +748,20 @@ function BootIntro({ heroArt, onComplete, onEnableAudio }: { heroArt: string; on
   );
 }
 
-function StartScreen({ onViewProjects, onHire }: { onViewProjects: () => void; onHire: () => void }) {
+function StartScreen({ onEnter }: { onEnter: () => void }) {
   return (
     <div className="start-screen">
-      <span className="eyebrow">AI AUTOMATION ENGINEER / AVAILABLE FOR COLLABORATION</span>
+      <span className="eyebrow">INTERACTIVE PORTFOLIO / 2026</span>
       <h1>
-        AI AUTOMATION<br />
-        <em>THAT SHIPS.</em>
+        AI AGENTS.<br />
+        <em>REAL IMPACT.</em>
       </h1>
-      <p className="hero-value-prop">{portfolioData.profile.valuePromise}</p>
-      <div className="hero-proof-list" aria-label="Core capabilities">
-        {portfolioData.profile.proofPills.map((proof) => <span key={proof}>{proof}</span>)}
-      </div>
-      <div className="hero-actions">
-        <button type="button" className="primary-mission" onClick={onViewProjects}>
-          <span>VIEW CASE STUDIES</span><ArrowUpRight size={17} />
-        </button>
-        <button type="button" className="secondary-mission" onClick={onHire}>
-          <Mail size={16} /><span>HIRE ME</span>
-        </button>
-      </div>
-      <div className="hero-social-links" aria-label="Professional profiles">
-        <a href={portfolioData.profile.socials[0].href} target="_blank" rel="noreferrer"><Github size={15} /> GITHUB PROFILE <ArrowUpRight size={13} /></a>
-        <a href={portfolioData.profile.socials[1].href} target="_blank" rel="noreferrer"><Linkedin size={15} /> LINKEDIN PROFILE <ArrowUpRight size={13} /></a>
-      </div>
-      <div className="mission-strip hero-signal-strip">
-        <span>MISSION STATUS</span><strong>OPEN TO AI AUTOMATION ROLES</strong><span className="mission-light" />
+      <p>{portfolioData.profile.intro}</p>
+      <button type="button" className="primary-mission" onClick={onEnter}>
+        <span>ENTER CHARACTER FILE</span><ArrowUpRight size={17} />
+      </button>
+      <div className="mission-strip">
+        <span>MISSION STATUS</span><strong>READY TO PLAY</strong><span className="mission-light" />
       </div>
     </div>
   );
