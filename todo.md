@@ -582,3 +582,9 @@
 - [x] Define a compact, optional cue-name label for every section transition without competing with the mission title or progress indicator.
 - [x] Render the cue-name label responsively during pointer-driven Mission Select overlays while preserving reduced-motion and keyboard behavior.
 - [x] Add coverage and verify desktop/mobile overlay legibility, tests, build, and live deployment before publishing.
+
+## Mission Select radio waveform indicator
+
+- [x] Define a compact station-aware waveform treatment beside the RADIO CUE name without obscuring the existing transition hierarchy.
+- [x] Render animated waveform bars for normal motion and a clear static fallback for reduced-motion visitors.
+- [x] Add regression coverage and verify desktop/mobile overlay legibility, tests, build, and live deployment before publishing.

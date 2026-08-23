@@ -9,6 +9,8 @@
 
 @custom-variant dark (&:is(.dark *));
 
+.section-mission-cue .section-mission-waveform { display: inline-flex; align-items: center; gap: 2px; width: 15px; height: 11px; margin-left: 1px; color: var(--mission-accent); }.section-mission-waveform i { display: block; width: 2px; height: var(--wave-height); min-height: 3px; background: currentColor; box-shadow: 0 0 5px color-mix(in srgb, var(--mission-accent) 76%, transparent); transform-origin: center; animation: section-mission-wave-pulse 620ms calc(var(--wave-index) * -76ms) ease-in-out infinite alternate; } @keyframes section-mission-wave-pulse { from { opacity: .5; transform: scaleY(.42); } to { opacity: 1; transform: scaleY(1); } } @media (prefers-reduced-motion: reduce) { .section-mission-waveform i { animation: none; opacity: .92; transform: scaleY(.72); } }
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);

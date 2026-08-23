@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { cycleRadioStationIndex, radioStations } from "./radio";
+import { cycleRadioStationIndex, getRadioStationWaveform, radioStations } from "./radio";
 
 describe("radio station selector", () => {
   it("cycles forward and backward through all available stations", () => {
@@ -11,5 +11,12 @@ describe("radio station selector", () => {
   it("keeps the three named station sources distinct for manual selection", () => {
     expect(radioStations.map((station) => station.id)).toEqual(["V01", "V02", "V03"]);
     expect(new Set(radioStations.map((station) => station.src)).size).toBe(3);
+  });
+
+  it("assigns a compact, distinct waveform signature to each active station", () => {
+    expect(getRadioStationWaveform("V01")).toEqual([4, 7, 10, 6, 4]);
+    expect(getRadioStationWaveform("V02")).toEqual([5, 10, 6, 9, 5]);
+    expect(getRadioStationWaveform("V03")).toEqual([3, 6, 9, 7, 4]);
+    expect(getRadioStationWaveform("unknown")).toEqual(getRadioStationWaveform("V01"));
   });
 });

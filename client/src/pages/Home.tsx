@@ -38,7 +38,7 @@ import { portableMedia } from "@/data/portableMedia";
 import { CONTACT_SUCCESS_VISIBLE_MS, getContactSuccessCopy } from "@/lib/contactFeedback";
 import { submitContactTransmission } from "@/lib/contactDelivery";
 import { shouldEscalateWantedLevel, validateContactField, validateContactForm, type ContactField, type ContactFormErrors, type ContactFormValues } from "@/lib/contactValidation";
-import { cycleRadioStationIndex, radioStations } from "@/lib/radio";
+import { cycleRadioStationIndex, getRadioStationWaveform, radioStations } from "@/lib/radio";
 import { BACKGROUND_MUSIC_VOLUME, MISSION_LOADING_BACKGROUND_VOLUME, MISSION_LOADING_CUE_VOLUME, attemptAudioPlayback, attemptBackgroundAutoplay, playMissionLoadingCue, resumeBackgroundAudio, shouldAutoStartBackgroundAudio, shouldPlayMissionLoadingCue, shouldResumeBackgroundAudio, shouldStartBlockedAutoplayOnUserInteraction } from "@/lib/audio";
 import { shouldRenderHeroMotion } from "@/lib/heroMotion";
 import { getMobileMotionDurations } from "@/lib/mobileMotion";
@@ -556,7 +556,7 @@ export default function Home() {
         </aside>
 
       <AnimatePresence>
-        {loadingSection && <SectionMissionLoadingOverlay screen={portfolioData.screens.find((screen) => screen.id === loadingSection) ?? activeScreen} />}
+        {loadingSection && <SectionMissionLoadingOverlay screen={portfolioData.screens.find((screen) => screen.id === loadingSection) ?? activeScreen} stationId={activeRadioStation.id} />}
       </AnimatePresence>
       <motion.section className="content-stage" style={{ x: contentX, y: contentY }} aria-live="polite">
           <AnimatePresence initial={false} mode="wait">
@@ -847,9 +847,10 @@ function ExitGameFarewellOverlay({ onReturn }: { onReturn: () => void }) {
   );
 }
 
-function SectionMissionLoadingOverlay({ screen }: { screen: { id: ScreenId; navLabel: string; subtitle: string } }) {
+function SectionMissionLoadingOverlay({ screen, stationId }: { screen: { id: ScreenId; navLabel: string; subtitle: string }; stationId: string }) {
   const reduceMotion = useReducedMotion();
   const variant = getSectionMissionVariant(screen.id);
+  const waveform = getRadioStationWaveform(stationId);
   return (
     <motion.section className={`section-mission-overlay is-${variant.id}`} initial={reduceMotion ? false : { opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: reduceMotion ? 0 : 0.12, ease: cinematicEase }} role="status" aria-live="polite">
       <div className="section-mission-grid" aria-hidden="true" />
@@ -859,7 +860,7 @@ function SectionMissionLoadingOverlay({ screen }: { screen: { id: ScreenId; navL
         <h2>LOADING<br /><em>{getSectionMissionTitle(screen.id)}</em></h2>
         <p>PREPARING {screen.subtitle}</p>
         <motion.div className="section-mission-cue" initial={reduceMotion ? false : { opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: reduceMotion ? 0 : 0.18, delay: reduceMotion ? 0 : 0.08, ease: cinematicEase }}>
-          <span>RADIO CUE</span><strong>{getSectionMissionCueName(screen.id)}</strong>
+          <span>RADIO CUE</span><strong>{getSectionMissionCueName(screen.id)}</strong><span className="section-mission-waveform" aria-hidden="true">{waveform.map((height, index) => <i key={index} style={{ "--wave-height": `${height}px`, "--wave-index": index } as CSSProperties} />)}</span>
         </motion.div>
         <div className="section-mission-track"><i /></div>
         <small>{variant.signal}</small>
