@@ -44,6 +44,7 @@ import { shouldRenderHeroMotion } from "@/lib/heroMotion";
 import { getMobileMotionDurations } from "@/lib/mobileMotion";
 import { canLaunchGithubRepository, PROJECT_LAUNCH_DURATION_MS } from "@/lib/projectLaunch";
 import { getSectionMissionCueName, getSectionMissionTitle, getSectionMissionVariant, MENU_SECTION_LOADING_DURATION_MS, MENU_SECTION_REVEAL_DELAY_MS, shouldRunMenuTransition } from "@/lib/sectionTransition";
+import { getMissionRouteMeta, getProjectEvidenceMeta, getSignalInterceptStatus } from "@/lib/signatureSections";
 import { getLocalTimeMode, shouldApplyLocalTimeRadioPreset } from "@/lib/timeMode";
 import { exitFarewellCopy, shouldDismissExitExperience } from "@/lib/exitExperience";
 import { useIsMobile } from "@/hooks/useMobile";
@@ -730,17 +731,25 @@ function StartScreen({ onEnter }: { onEnter: () => void }) {
 
 function AboutScreen() {
   return (
-    <div className="detail-card about-card">
-      <span className="section-label">01 / PERSONAL INTEL</span>
-      <h2>ABOUT <em>ME</em></h2>
-      <p className="large-copy">{portfolioData.profile.about}</p>
-      <dl className="intel-grid">
-        <div><dt>ROLE</dt><dd>{portfolioData.profile.role}</dd></div>
+    <section className="passport-dossier" aria-label="Vice City passport profile">
+      <div className="passport-grain" aria-hidden="true" />
+      <header className="passport-header"><span>VICE CITY / PERSONAL DOSSIER</span><strong>FILE 01 — ACTIVE</strong></header>
+      <div className="passport-main">
+        <div className="passport-photo" aria-hidden="true"><span>SJ</span><small>IDENTITY<br />VERIFIED</small></div>
+        <div className="passport-identity">
+          <span className="section-label">01 / CHARACTER PASSPORT</span>
+          <h2>{portfolioData.profile.shortName}<br /><em>JADOON</em></h2>
+          <p>{portfolioData.profile.about}</p>
+        </div>
+      </div>
+      <dl className="passport-stamps">
+        <div><dt>CLASS</dt><dd>{portfolioData.profile.role}</dd></div>
         <div><dt>BASE</dt><dd>{portfolioData.profile.location}</dd></div>
         <div><dt>SPECIALITY</dt><dd>{portfolioData.profile.speciality}</dd></div>
-        <div><dt>MODE</dt><dd>{portfolioData.profile.mode}</dd></div>
+        <div><dt>LOADOUT</dt><dd>{portfolioData.profile.mode}</dd></div>
       </dl>
-    </div>
+      <footer className="passport-footer"><span>STATUS // {portfolioData.profile.availability}</span><span>ISSUED // VICE SIGNAL</span></footer>
+    </section>
   );
 }
 
@@ -777,28 +786,33 @@ function SkillsScreen() {
 
 function ProjectsScreen({ selectedProject, onSelectProject, onMissionPassed, onLaunchRepository }: { selectedProject: number; onSelectProject: (index: number) => void; onMissionPassed: (projectTitle: string) => void; onLaunchRepository: (project: (typeof portfolioData.projects)[number]) => void }) {
   const project = portfolioData.projects[selectedProject];
+  const evidence = getProjectEvidenceMeta(project, selectedProject);
   return (
-    <div className="projects-layout">
-      <div className="project-select" aria-label="Project selector">
+    <section className="evidence-wall" aria-label="Project evidence wall">
+      <header className="evidence-wall-header"><span>VICE SIGNAL / EVIDENCE BOARD</span><strong>{evidence.caseId}</strong></header>
+      <div className="evidence-wall-layout">
+      <div className="evidence-file-stack" aria-label="Project selector">
         {portfolioData.projects.map((item, index) => (
-          <button key={item.title} type="button" onClick={() => onSelectProject(index)} className={`project-tab ${selectedProject === index ? "is-selected" : ""}`}>
-            <span>{item.code}</span><strong>{item.title}</strong><ChevronRight size={14} />
+          <button key={item.title} type="button" onClick={() => onSelectProject(index)} className={`evidence-file ${selectedProject === index ? "is-selected" : ""}`}>
+            <span className="evidence-pin" aria-hidden="true" /><span>{item.code.replace("MISSION", "CASE")}</span><strong>{item.title}</strong><ChevronRight size={14} />
           </button>
         ))}
       </div>
-      <article className="project-detail" key={project.title}>
-        <span className="section-label">{project.type}</span>
+      <article className="evidence-case" key={project.title}>
+        <div className="evidence-case-meta"><span>{evidence.marker} // {project.type}</span><strong>{evidence.source}</strong></div>
         <h2>{project.title}</h2>
         <p>{project.description}</p>
-        <div className="tag-row">{project.stack.map((tag) => <span key={tag}>{tag}</span>)}</div>
-        <div className="project-actions">
+        <div className="evidence-tags">{project.stack.map((tag) => <span key={tag}>{tag}</span>)}</div>
+        <div className="evidence-status"><span>{evidence.status}</span><i aria-hidden="true" /></div>
+        <div className="evidence-actions">
           {project.href ? <button type="button" className="text-action" onClick={() => onLaunchRepository(project)}>OPEN GITHUB REPOSITORY <ArrowUpRight size={15} /></button> : <span className="project-source-note">CV-VERIFIED CASE FILE</span>}
           <button type="button" className="text-action mission-action" onClick={() => onMissionPassed(project.title)}>
             COMPLETE MISSION <ArrowUpRight size={15} />
           </button>
         </div>
       </article>
-    </div>
+      </div>
+    </section>
   );
 }
 
@@ -896,18 +910,21 @@ export function MissionPassedOverlay({ projectTitle, onDismiss }: { projectTitle
 
 function ExperienceScreen() {
   return (
-    <div className="detail-card experience-card">
-      <span className="section-label">04 / CAREER LOG</span>
-      <h2>EXPERIENCE</h2>
-      <div className="timeline-list">
-        {portfolioData.experience.map((item) => (
-          <article className="timeline-item" key={`${item.period}-${item.role}`}>
-            <span className="timecode">{item.period}</span>
-            <div><h3>{item.role}</h3><p>{item.detail}</p></div>
-          </article>
-        ))}
+    <section className="mission-route-map" aria-label="Career mission route map">
+      <header><span className="section-label">04 / MISSION ROUTE</span><strong>CAREER GRID // LIVE</strong></header>
+      <h2>ROUTE <em>MAP</em></h2>
+      <p className="route-intro">A recorded route through applied AI, automation and self-directed product development.</p>
+      <div className="route-network">
+        {portfolioData.experience.map((item, index) => {
+          const route = getMissionRouteMeta(index, portfolioData.experience.length);
+          return <article className="route-stop" key={`${item.period}-${item.role}`} style={{ "--route-index": index } as CSSProperties}>
+            <span className="route-node">{String(index + 1).padStart(2, "0")}</span>
+            <div className="route-content"><span>{route.checkpoint}</span><h3>{item.role}</h3><p>{item.detail}</p><small>{item.period} // {route.status}</small></div>
+            {index < portfolioData.experience.length - 1 && <i className="route-link" aria-hidden="true" />}
+          </article>;
+        })}
       </div>
-    </div>
+    </section>
   );
 }
 
@@ -997,16 +1014,19 @@ function ContactScreen({ onTypingCue, onSocialActivate, onMissionPassed, onValid
 
   const fieldClass = (field: ContactField) => `contact-field ${touchedFields[field] && fieldErrors[field] ? "has-error" : ""}`;
   const errorId = (field: ContactField) => `contact-${field}-error`;
+  const interceptStatus = getSignalInterceptStatus({ hasErrors: Object.values(fieldErrors).some(Boolean), isSubmitting, submissionSuccess });
 
   return (
-    <div className="contact-card">
+    <section className="contact-card signal-intercept-card">
+      <div className="signal-intercept-topline"><span>VICE SIGNAL / INTERCEPT CONSOLE</span><strong>{interceptStatus}</strong></div>
       <span className="section-label">06 / OPEN CHANNEL</span>
       <h2>LET'S BUILD<br /><em>THE NEXT ONE.</em></h2>
       <p>For AI automation, agent workflows and practical software collaborations.</p>
       <a href={`mailto:${portfolioData.profile.email}`} className="contact-address"><Mail size={17} /> {portfolioData.profile.email}<ArrowUpRight size={17} /></a>
       <button type="button" className="copy-button" onClick={copyEmail}><Copy size={15} /> COPY CHANNEL</button>
-      <form className="contact-form" onSubmit={submitContact}>
-        <div className="contact-form-heading"><span>DIRECT TRANSMISSION</span><small>ALL FIELDS REQUIRED</small></div>
+      <form className="contact-form signal-intercept-form" onSubmit={submitContact}>
+        <div className="signal-decode-lines" aria-hidden="true"><i /><i /><i /></div>
+        <div className="contact-form-heading"><span>DECODED TRANSMISSION</span><small>ALL FIELDS REQUIRED</small></div>
         <div className="contact-form-grid">
           <label className={fieldClass("name")}>
             <span>YOUR NAME</span>
@@ -1030,7 +1050,7 @@ function ContactScreen({ onTypingCue, onSocialActivate, onMissionPassed, onValid
           <AnimatePresence initial={false}>{touchedFields.message && fieldErrors.message && <motion.small id={errorId("message")} className="contact-field-error" role="alert" initial={reduceMotion ? false : { opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: reduceMotion ? 0 : 0.16, ease: cinematicEase }}>{fieldErrors.message}</motion.small>}</AnimatePresence>
         </label>
         <button type="submit" className="contact-submit" disabled={isSubmitting} aria-busy={isSubmitting}>
-          {isSubmitting ? <><Spinner className="contact-submit-spinner" aria-hidden="true" /> TRANSMITTING...</> : <><Send size={14} /> SEND MESSAGE</>}
+          {isSubmitting ? <><Spinner className="contact-submit-spinner" aria-hidden="true" /> TRANSMITTING...</> : <><Send size={14} /> TRANSMIT SIGNAL</>}
         </button>
         <AnimatePresence initial={false}>
           {submissionSuccess && <motion.div
@@ -1064,6 +1084,6 @@ function ContactScreen({ onTypingCue, onSocialActivate, onMissionPassed, onValid
           ))}
         </div>
       </div>
-    </div>
+    </section>
   );
 }

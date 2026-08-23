@@ -594,3 +594,13 @@
 - [x] Pass the current music-on/off state into the Mission Select waveform without affecting manual MUSIC OFF behavior.
 - [x] Subtly dim and pause waveform activity while music is off, retaining a readable static station signature.
 - [x] Add coverage and verify both audio-state overlays, tests, build, and live deployment before publishing.
+
+## Signature GTA portfolio section redesign
+
+- [x] Audit Projects, About, Experience, and Contact content contracts so real project links, contact delivery, validation, CV, social links, and mobile composition remain intact.
+- [x] Establish a cohesive evidence-file visual system with responsive layouts, restrained motion, and reduced-motion fallbacks.
+- [x] Rebuild Projects as an interactive Evidence Wall while retaining project briefing and repository-launch flows.
+- [x] Rebuild About as a Vice City Passport dossier using real identity, role, location, and professional information.
+- [x] Rebuild Experience as a Mission Route Map that preserves chronological career data and readable mobile flow.
+- [x] Rebuild Contact as a Signal Intercept interface while retaining real-time validation, delivery, success feedback, and direct social links.
+- [x] Add focused regression coverage and verify desktop/mobile views, functional links/forms, typecheck, tests, production build, and live deployment.
