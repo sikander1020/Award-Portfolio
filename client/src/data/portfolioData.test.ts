@@ -149,13 +149,13 @@ describe("portfolioData real professional profile", () => {
     expect(portfolioData.skills.every((skill) => Boolean(skill.category) && Boolean(skill.status) && !("level" in skill))).toBe(true);
   });
 
-  it("uses the supplied rooftop video as a copy-safe Contact scene with full mobile composition", () => {
+  it("uses the supplied rooftop video as a copy-safe Contact scene with a wider non-zoomed composition", () => {
     const contact = portfolioData.screens.find((screen) => screen.id === "contact");
     expect(contact).toMatchObject({
       videoFit: "cover",
       mobileVideoFit: "contain",
-      videoScale: 1,
-      mobileVideoScale: 1.18,
+      videoScale: 0.86,
+      mobileVideoScale: 0.96,
     });
   });
 
