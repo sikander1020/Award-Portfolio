@@ -545,5 +545,5 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--vice-pink); out
 
 /* Preserve a static cover-fit scene underlay for desktop motion-video edges. */
 @media (min-width: 721px) {
-  .scene-backdrop.is-scene-motion { background-image: linear-gradient(90deg, rgba(3,3,7,.78) 0%, rgba(4,4,8,.50) 28%, rgba(4,4,8,.16) 49%, rgba(3,3,7,.02) 72%), linear-gradient(0deg, rgba(2,2,5,.34) 0%, transparent 54%, rgba(4,4,8,.07) 100%), var(--scene-image); background-position: center, center, var(--scene-focus) center; background-size: cover, cover, cover; background-repeat: no-repeat; }
+  .scene-backdrop.is-scene-motion { background-image: linear-gradient(90deg, rgba(3,3,7,.78) 0%, rgba(4,4,8,.50) 28%, rgba(4,4,8,.16) 49%, rgba(3,3,7,.02) 72%), linear-gradient(0deg, rgba(2,2,5,.34) 0%, transparent 54%, rgba(4,4,8,.07) 100%); }
 }
