@@ -77,7 +77,6 @@ export default function Home() {
   });
   const [selectedProject, setSelectedProject] = useState(0);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
-  const [isDesktopRailOpen, setIsDesktopRailOpen] = useState(false);
   const [launchingProject, setLaunchingProject] = useState<(typeof portfolioData.projects)[number] | null>(null);
   const [isExitFarewellOpen, setIsExitFarewellOpen] = useState(false);
   const [isBooting, setIsBooting] = useState(
@@ -277,7 +276,6 @@ export default function Home() {
   const switchScreen = (id: ScreenId, cinematic = true) => {
     if (id === activeId) return;
     setMobileNavOpen(false);
-    setIsDesktopRailOpen(false);
     if (!cinematic || !shouldRunMenuTransition({ from: activeId, to: id, reduceMotion: Boolean(reduceMotion) })) {
       setActiveId(id);
       return;
@@ -501,17 +499,8 @@ export default function Home() {
         </div>
       </header>
 
-      <section className={`game-shell ${isDesktopRailOpen ? "is-rail-open" : ""}`}>
-        <aside
-          className="interface-rail"
-          aria-label="Portfolio navigation"
-          onMouseEnter={() => setIsDesktopRailOpen(true)}
-          onMouseLeave={() => setIsDesktopRailOpen(false)}
-          onFocusCapture={() => setIsDesktopRailOpen(true)}
-          onBlurCapture={(event) => {
-            if (!event.currentTarget.contains(event.relatedTarget)) setIsDesktopRailOpen(false);
-          }}
-        >
+      <section className="game-shell">
+        <aside className="interface-rail" aria-label="Portfolio navigation">
           <div className="mobile-rail-header">
             <div className="wordmark" aria-label={`${portfolioData.profile.fullName} Builds`}>
               <span>{portfolioData.profile.shortName}</span>
