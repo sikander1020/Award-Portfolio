@@ -493,32 +493,11 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--vice-pink); out
 }
 @keyframes nav-lock-on { 0% { width: 4px; opacity: .35; } 58% { width: 22px; opacity: 1; } 100% { width: 17px; opacity: 1; } }
 @keyframes nav-arrow-ping { 0%, 100% { filter: brightness(1); } 45% { filter: brightness(1.85) drop-shadow(0 0 6px rgba(255,44,138,.85)); } }
-/* Mobile video-first composition: preserve a visible right-side scene window while data remains legible in a contained left flow. */
-@media (max-width: 720px) {
-  .content-stage { padding-right: 16px; padding-left: 16px; }
-  .chapter-head { width: min(74%, 275px); background: linear-gradient(90deg, rgba(3,3,7,.86), rgba(3,3,7,.30), transparent); }
-  .screen-pane { width: min(78%, 342px); }
-  .screen-pane .passport-dossier, .screen-pane .evidence-wall, .screen-pane .mission-route-map, .screen-pane .training-archive, .screen-pane .signal-intercept-card, .screen-pane .skills-card, .screen-pane .detail-card { box-sizing: border-box; }
-  .scene-backdrop.is-scene-motion { background-image: linear-gradient(90deg, rgba(3,3,7,.62) 0%, rgba(4,4,8,.27) 36%, rgba(4,4,8,.06) 58%, rgba(3,3,7,0) 100%), linear-gradient(0deg, rgba(2,2,5,.18) 0%, transparent 58%, rgba(4,4,8,.03) 100%); }
-  .scene-motion-video { filter: saturate(1.20) contrast(1.06) brightness(1.12); }
-  .scene-dust { opacity: .14; }.grain-layer { opacity: .045; }.ambient-bloom { opacity: .42; }
-  .passport-dossier, .evidence-wall, .mission-route-map, .training-archive, .signal-intercept-card, .skills-card, .detail-card, .contact-card { background-color: transparent; }
-  .passport-dossier, .evidence-wall, .mission-route-map, .training-archive, .signal-intercept-card, .skills-card, .detail-card, .contact-card { background-image: linear-gradient(105deg, rgba(5,7,12,.48), rgba(7,9,14,.11)); box-shadow: 12px 18px 36px rgba(0,0,0,.16); }
-  .passport-main { grid-template-columns: 76px minmax(0, 1fr); gap: 12px; }
-  .passport-photo { min-height: 218px; }
-  .passport-identity h2 { font-size: clamp(42px, 13vw, 58px); }
-  .evidence-wall-layout { grid-template-columns: 1fr; }
-  .evidence-file-stack { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 5px; }
-  .evidence-file { min-width: 0; padding: 8px 7px; }
-  .evidence-file strong { font-size: 11px; }
-  .evidence-case { background: linear-gradient(105deg, rgba(9,12,17,.34), rgba(11,10,15,.07)); }
-  .skills-list { grid-template-columns: 1fr; }
-  .skill-card { background: rgba(8,9,14,.13); }
-  .signal-intercept-form { background: rgba(4,9,13,.09); }
-  .contact-form-grid { grid-template-columns: 1fr; }
-}
-@media (max-width: 370px) {
-  .screen-pane { width: min(80%, 320px); }
-  .passport-main { grid-template-columns: 62px minmax(0, 1fr); gap: 9px; }
-  .passport-photo { min-height: 190px; }
+@media (min-width: 721px) {
+  .game-shell { grid-template-columns: minmax(310px, 32vw) 1fr 94px; }
+  .interface-rail { min-width: 0; padding-right: clamp(28px, 3vw, 52px); }
+  .game-nav { width: 100%; }
+  .game-nav .nav-item { grid-template-columns: 28px minmax(0, 1fr) 18px; min-width: 0; }
+  .game-nav .nav-label { min-width: 0; white-space: nowrap; overflow: visible; text-overflow: clip; }
+  .game-nav .nav-item.is-active .nav-label { animation: none; letter-spacing: inherit; white-space: nowrap; }
 }
