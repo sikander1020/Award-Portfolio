@@ -501,6 +501,14 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--vice-pink); out
   .game-nav .nav-item.is-active .nav-label { position: absolute; left: 35px; right: auto; animation: none; letter-spacing: .08em; white-space: nowrap; }
 }
 
+/* Preserve a substantial project-media stage on conventional desktop widths; the cinematic wide rail remains for large displays. */
+@media (min-width: 721px) and (max-width: 1679px) {
+  .game-shell { grid-template-columns: minmax(280px, 31vw) 1fr 94px; }
+  .content-stage { padding-left: clamp(38px, 4vw, 62px); padding-right: clamp(28px, 3vw, 52px); }
+  .chapter-head { left: clamp(38px, 4vw, 62px); }
+  .screen-projects { width: 100%; }
+}
+
 /* Hierarchy pass: the animated scene stays cinematic, while project media and case data use bounded grid containers. */
 @media (min-width: 721px) {
   .screen-projects { width: min(100%, 1180px); }
