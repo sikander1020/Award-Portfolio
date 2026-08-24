@@ -493,3 +493,23 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--vice-pink); out
 }
 @keyframes nav-lock-on { 0% { width: 4px; opacity: .35; } 58% { width: 22px; opacity: 1; } 100% { width: 17px; opacity: 1; } }
 @keyframes nav-arrow-ping { 0%, 100% { filter: brightness(1); } 45% { filter: brightness(1.85) drop-shadow(0 0 6px rgba(255,44,138,.85)); } }
+/* Reference-aligned desktop composition: data stays in a compact left rail so the approved scene video remains a primary, clear visual. */
+@media (min-width: 721px) {
+  .content-stage { align-items: flex-start; padding: clamp(72px, 9vh, 96px) clamp(20px, 2.6vw, 42px) 58px; }
+  .chapter-head { left: clamp(20px, 2.6vw, 42px); right: auto; width: min(510px, calc(100% - 42px)); }
+  .screen-pane { width: min(510px, calc(100% - 12px)); }
+  .screen-pane > .passport-dossier, .screen-pane > .evidence-wall, .screen-pane > .mission-route-map, .screen-pane > .training-archive, .screen-pane > .signal-intercept-card, .screen-pane > .skills-card, .screen-pane > .detail-card { max-width: 100%; }
+  .scene-backdrop.is-scene-motion { background-image: linear-gradient(90deg, rgba(3,3,7,.78) 0%, rgba(4,4,8,.50) 28%, rgba(4,4,8,.16) 49%, rgba(3,3,7,.02) 72%), linear-gradient(0deg, rgba(2,2,5,.34) 0%, transparent 54%, rgba(4,4,8,.07) 100%); }
+  .scene-motion-video { filter: saturate(1.16) contrast(1.05) brightness(1.10); }
+  .scene-dust { opacity: .22; }.grain-layer { opacity: .07; }.ambient-bloom { opacity: .54; }
+  .evidence-wall-layout { grid-template-columns: 1fr; }
+  .evidence-file-stack { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+  .evidence-file { min-width: 0; }
+  .evidence-file strong { font-size: 13px; }
+  .signal-intercept-form .contact-form-grid { grid-template-columns: 1fr; }
+}
+@media (min-width: 721px) and (max-width: 1080px) {
+  .screen-pane { width: min(470px, calc(100% - 8px)); }
+  .chapter-head { width: min(470px, calc(100% - 28px)); }
+  .evidence-file-stack { grid-template-columns: 1fr; }
+}
