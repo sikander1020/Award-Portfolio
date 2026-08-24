@@ -498,4 +498,57 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--vice-pink); out
   .game-shell { grid-template-columns: minmax(360px, 38vw) 1fr 94px; }
   .content-stage { padding-left: clamp(48px, 6vw, 104px); }
   .chapter-head { left: clamp(48px, 6vw, 104px); }
+  .game-nav .nav-item.is-active .nav-label { position: absolute; left: 35px; right: auto; animation: none; letter-spacing: .08em; white-space: nowrap; }
+}
+
+/* Hierarchy pass: the animated scene stays cinematic, while project media and case data use bounded grid containers. */
+@media (min-width: 721px) {
+  .screen-projects { width: min(100%, 1180px); }
+  .screen-projects .evidence-wall { width: 100%; max-width: none; overflow: hidden; }
+  .screen-projects .evidence-wall-layout { grid-template-columns: 1fr; }
+  .screen-projects .evidence-file-stack { grid-template-columns: repeat(3, minmax(0, 1fr)); border-right: 0; border-bottom: 1px solid rgba(255,255,255,.16); padding: 14px 17px; }
+  .screen-projects .evidence-file { min-height: 76px; }
+  .project-detail-grid { display: grid; grid-template-columns: minmax(0, 1.85fr) minmax(250px, .9fr); align-items: stretch; }
+  .project-visual-stage { display: flex; min-height: 588px; flex-direction: column; gap: 18px; padding: clamp(24px, 3vw, 38px); background: linear-gradient(145deg, rgba(7,10,15,.92), rgba(17,13,17,.67)); border-right: 1px solid rgba(255,255,255,.15); }
+  .project-visual-stage-header { display: flex; justify-content: space-between; gap: 12px; color: rgba(255,255,255,.6); font-family: "Barlow Condensed", sans-serif; font-size: 10px; font-weight: 700; letter-spacing: .14em; }
+  .project-visual-stage-header strong { color: #ffb978; }
+  .project-visual-stage .project-explainer { display: grid; flex: 1; align-content: start; gap: 14px; margin: 0; padding: 0; border: 0; background: transparent; }
+  .project-visual-stage .project-architecture { display: grid; min-height: 0; margin: 0; overflow: hidden; border: 1px solid rgba(118,211,255,.32); background: #05080d; }
+  .project-visual-stage .project-architecture img { width: 100%; min-height: 0; height: auto; max-height: 300px; object-fit: contain; filter: grayscale(1) sepia(.32) hue-rotate(130deg) saturate(.68) brightness(.64) contrast(1.28); opacity: .86; }
+  .project-visual-stage .project-architecture.is-supporting-intel { max-height: 155px; }
+  .project-visual-stage .project-architecture.is-supporting-intel img { max-height: 126px; }
+  .project-visual-stage .project-walkthrough { margin: 0; }
+  .project-visual-stage .project-walkthrough-primary { padding: 0; border: 0; background: transparent; }
+  .project-visual-stage .walkthrough-video { width: 100%; max-height: 330px; object-fit: contain; background: #05070b; }
+  .project-visual-fallback { display: grid; flex: 1; place-content: center; gap: 14px; min-height: 300px; border: 1px solid rgba(255,119,113,.34); padding: clamp(28px, 5vw, 62px); background: linear-gradient(135deg, rgba(255,119,113,.12), rgba(6,10,16,.2)); color: rgba(255,255,255,.74); }
+  .project-visual-fallback span { color: #ffb978; font-family: "Barlow Condensed", sans-serif; font-size: 10px; font-weight: 700; letter-spacing: .15em; }
+  .project-visual-fallback strong { color: #fff; font: 400 clamp(40px, 4vw, 68px)/.86 "Bebas Neue", sans-serif; letter-spacing: .02em; }
+  .project-visual-fallback p { max-width: 380px; margin: 0; font-size: 14px; line-height: 1.58; }
+  .project-detail-grid .evidence-case { min-height: 588px; padding: clamp(26px, 3.3vw, 42px); background: linear-gradient(145deg, rgba(14,17,22,.94), rgba(13,11,16,.84)); }
+  .project-detail-grid .evidence-case h2 { font-size: clamp(46px, 4.5vw, 72px); }
+  .project-detail-grid .evidence-brief { display: grid; gap: 14px; margin-top: 23px; }
+  .project-detail-grid .evidence-brief div { border-top: 1px solid rgba(255,255,255,.15); padding-top: 11px; }
+}
+
+@media (max-width: 720px) {
+  .screen-projects .evidence-wall { width: 100%; }
+  .screen-start .start-screen { position: relative; isolation: isolate; margin-top: 4px; padding: 27px 18px 25px; background: linear-gradient(90deg, rgba(3,3,7,.86) 0%, rgba(3,3,7,.73) 67%, rgba(3,3,7,.24) 100%); box-shadow: 0 16px 34px rgba(0,0,0,.16); }
+  .screen-start .start-screen > * { position: relative; z-index: 1; }
+  .screen-start .start-screen p { max-width: 31rem; text-shadow: 0 2px 11px rgba(0,0,0,.94); }
+  .screen-start .mission-strip { margin-top: 23px; }
+  .project-detail-grid { display: grid; grid-template-columns: minmax(0, 1fr); }
+  .project-visual-stage { display: grid; gap: 12px; padding: 19px 16px 18px; border-bottom: 1px solid rgba(255,255,255,.16); background: linear-gradient(145deg, rgba(7,10,15,.9), rgba(17,13,17,.56)); }
+  .project-visual-stage-header { display: flex; justify-content: space-between; gap: 10px; color: rgba(255,255,255,.62); font-family: "Barlow Condensed", sans-serif; font-size: 9px; font-weight: 700; letter-spacing: .13em; }
+  .project-visual-stage-header strong { color: #ffb978; }
+  .project-visual-stage .project-explainer { display: grid; gap: 11px; margin: 0; padding: 0; border: 0; background: transparent; }
+  .project-visual-stage .project-architecture { margin: 0; border: 1px solid rgba(118,211,255,.32); background: #05080d; }
+  .project-visual-stage .project-architecture img { width: 100%; max-height: 250px; object-fit: contain; filter: grayscale(1) sepia(.32) hue-rotate(130deg) saturate(.68) brightness(.64) contrast(1.28); opacity: .86; }
+  .project-visual-stage .project-architecture.is-supporting-intel { max-height: 145px; }
+  .project-visual-stage .project-architecture.is-supporting-intel img { max-height: 116px; }
+  .project-visual-stage .project-walkthrough-primary { padding: 0; border: 0; background: transparent; }
+  .project-visual-stage .walkthrough-video { width: 100%; max-height: 250px; object-fit: contain; background: #05070b; }
+  .project-visual-fallback { display: grid; gap: 10px; min-height: 220px; place-content: center; border: 1px solid rgba(255,119,113,.34); padding: 25px; background: linear-gradient(135deg, rgba(255,119,113,.12), rgba(6,10,16,.2)); color: rgba(255,255,255,.74); }
+  .project-visual-fallback span { color: #ffb978; font-family: "Barlow Condensed", sans-serif; font-size: 9px; font-weight: 700; letter-spacing: .14em; }
+  .project-visual-fallback strong { color: #fff; font: 400 clamp(38px, 11vw, 56px)/.88 "Bebas Neue", sans-serif; }
+  .project-visual-fallback p { margin: 0; font-size: 13px; line-height: 1.55; }
 }

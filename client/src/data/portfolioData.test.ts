@@ -67,6 +67,12 @@ describe("portfolioData real professional profile", () => {
     expect(otherProjects.every((project) => project.explainer === undefined)).toBe(true);
   });
 
+  it("keeps every visual-first project explainer grouped as diagram plus a labelled walkthrough", () => {
+    const explainers = portfolioData.projects.flatMap((project) => project.explainer ? [project.explainer] : []);
+    expect(explainers).toHaveLength(2);
+    expect(explainers.every((explainer) => Boolean(explainer.diagram.src) && Boolean(explainer.diagram.alt) && Boolean(explainer.walkthrough.title) && Boolean(explainer.walkthrough.summary))).toBe(true);
+  });
+
   it("keeps source-backed skills non-quantified and experience project-based", () => {
     expect(portfolioData.skills.every((skill) => !("level" in skill))).toBe(true);
     expect(portfolioData.experience.map((item) => item.period)).toEqual([

@@ -834,6 +834,7 @@ function ProjectsScreen({ selectedProject, onSelectProject, onMissionPassed, onL
   const project = portfolioData.projects[selectedProject];
   const evidence = getProjectEvidenceMeta(project, selectedProject);
   const explainer = project.explainer;
+  const hasWalkthroughVideo = Boolean(explainer?.walkthrough.kind === "video" && explainer.walkthrough.src);
   const heatmapEntries = portfolioData.projects.map((item, index) => ({ item, index })).filter(({ item }) => projectMatchesHeatmap(item, heatmapFilter));
   const selectHeatmapFilter = (filter: ProjectHeatmapFilter) => {
     setHeatmapFilter(filter);
@@ -852,6 +853,36 @@ function ProjectsScreen({ selectedProject, onSelectProject, onMissionPassed, onL
           </button>
         ))}
       </div>
+      <div className="project-detail-grid">
+        <section className={`project-visual-stage ${explainer ? "has-project-media" : ""}`} aria-label={`${project.title} visual evidence`}>
+          <div className="project-visual-stage-header"><span>VISUAL EVIDENCE</span><strong>{evidence.caseId}</strong></div>
+          {explainer ? <section className="project-explainer" aria-label={`${project.title} architecture diagram and workflow walkthrough`}>
+            <div className="project-explainer-label"><Network size={14} /><span>ARCHITECTURE // VERIFIED COMPONENT MAP</span><i>ILLUSTRATIVE</i></div>
+            {hasWalkthroughVideo && <div className="project-walkthrough project-walkthrough-primary">
+              <div className="walkthrough-heading"><span><Play size={13} /> {explainer.walkthrough.title}</span><small>NOT A LIVE PRODUCT RECORDING</small></div>
+              <video className="walkthrough-video" controls playsInline preload="none" muted poster={explainer.walkthrough.poster} aria-label={`${project.title} illustrative workflow walkthrough`}>
+                  <source src={explainer.walkthrough.src} type="video/mp4" />
+                  Your browser does not support the illustrative workflow walkthrough video.
+              </video>
+              <p>{explainer.walkthrough.summary}</p>
+            </div>}
+            <figure className={`project-architecture ${hasWalkthroughVideo ? "is-supporting-intel" : ""}`}>
+              <img src={explainer.diagram.src} alt={explainer.diagram.alt} loading="lazy" decoding="async" />
+              <figcaption>Diagram reflects documented project components and workflow relationships.</figcaption>
+            </figure>
+            {!hasWalkthroughVideo && <div className="project-walkthrough project-walkthrough-primary">
+              <div className="walkthrough-heading"><span><Play size={13} /> {explainer.walkthrough.title}</span><small>ILLUSTRATIVE FLOW</small></div>
+              <div className="walkthrough-simulation" role="img" aria-label={`${project.title} illustrative workflow path: ${explainer.walkthrough.stages?.join(", ")} `}>
+                {explainer.walkthrough.stages?.map((stage, index) => <span key={stage} style={{ "--flow-step": index } as CSSProperties}><b>0{index + 1}</b>{stage}</span>)}
+              </div>
+              <p>{explainer.walkthrough.summary}</p>
+            </div>}
+          </section> : <div className="project-visual-fallback">
+            <span>CASE FILE // {evidence.marker}</span>
+            <strong>{project.type}</strong>
+            <p>Documented project evidence is organized in the adjacent brief. Use the project action to review the verified source.</p>
+          </div>}
+        </section>
       <article className="evidence-case" key={project.title}>
         <div className="evidence-case-meta"><span>{evidence.marker} // {project.type}</span><strong>{evidence.source}</strong></div>
         <h2>{project.title}</h2>
@@ -861,27 +892,6 @@ function ProjectsScreen({ selectedProject, onSelectProject, onMissionPassed, onL
           <div><dt>SOLUTION</dt><dd>{project.caseStudy.solution}</dd></div>
           <div><dt>RESULT</dt><dd>{project.caseStudy.result}</dd></div>
         </dl>
-        {explainer && <section className="project-explainer" aria-label={`${project.title} architecture diagram and workflow walkthrough`}>
-          <div className="project-explainer-label"><Network size={14} /><span>ARCHITECTURE // VERIFIED COMPONENT MAP</span><i>ILLUSTRATIVE</i></div>
-          <figure className="project-architecture">
-            <img src={explainer.diagram.src} alt={explainer.diagram.alt} loading="lazy" decoding="async" />
-            <figcaption>Diagram reflects documented project components and workflow relationships.</figcaption>
-          </figure>
-          <div className="project-walkthrough">
-            <div className="walkthrough-heading"><span><Play size={13} /> {explainer.walkthrough.title}</span><small>NOT A LIVE PRODUCT RECORDING</small></div>
-            {explainer.walkthrough.kind === "video" && explainer.walkthrough.src ? (
-              <video className="walkthrough-video" controls playsInline preload="none" muted poster={explainer.walkthrough.poster} aria-label={`${project.title} illustrative workflow walkthrough`}>
-                <source src={explainer.walkthrough.src} type="video/mp4" />
-                Your browser does not support the illustrative workflow walkthrough video.
-              </video>
-            ) : (
-              <div className="walkthrough-simulation" role="img" aria-label={`${project.title} illustrative workflow path: ${explainer.walkthrough.stages?.join(", ")}`}>
-                {explainer.walkthrough.stages?.map((stage, index) => <span key={stage} style={{ "--flow-step": index } as CSSProperties}><b>0{index + 1}</b>{stage}</span>)}
-              </div>
-            )}
-            <p>{explainer.walkthrough.summary}</p>
-          </div>
-        </section>}
         <div className="evidence-tags">{project.stack.map((tag) => <span key={tag}>{tag}</span>)}</div>
         <div className="evidence-status"><span>{evidence.status}</span><i aria-hidden="true" /></div>
         <div className="evidence-actions">
@@ -891,6 +901,7 @@ function ProjectsScreen({ selectedProject, onSelectProject, onMissionPassed, onL
           </button>
         </div>
       </article>
+      </div>
       </div>
     </section>
   );
